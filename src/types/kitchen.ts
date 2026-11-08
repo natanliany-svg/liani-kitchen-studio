@@ -96,7 +96,7 @@ export interface RoomSpecification {
 
 export type PlanId = 'plan-A' | 'plan-B' | 'custom';
 
-export type ViewMode = 'split' | '3d' | '2d' | 'compare' | 'media';
+export type ViewMode = 'split' | '3d' | '2d' | 'compare' | 'media' | 'renders';
 
 export type CameraPreset = 
   | 'orbit' 

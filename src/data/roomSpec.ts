@@ -4,7 +4,7 @@ export const ROOM_SPEC: RoomSpecification = {
   widthCm: 317,
   depthCm: 705,
   heightCm: 246,
-  entranceReturnWallCm: 44,
+  entranceReturnWallCm: 50,
   pillars: [
     {
       id: 'pillar-1',
@@ -77,17 +77,17 @@ export const NICHE_BOUNDS = {
   leftWallActive: {
     id: 'left-wall',
     nameHe: "קיר שמאל (גזרת נגרות מאושרת)",
-    zStart: 465,
-    zEnd: 705,
+    zStart: 400,
+    zEnd: 640,
     lengthCm: 240, // 160 cm baking + 80 cm pantry
     depthCm: 60
   },
   leftWallDining: {
     id: 'dining-area',
-    nameHe: "מרחב פינת אוכל משפחתית ושולחן שבת",
+    nameHe: "מרחב פתוח ומרווח לקיר שמאל",
     zStart: 0,
-    zEnd: 465,
-    lengthCm: 465,
-    minClearanceLengthCm: 225 // Guaranteed dining zone
+    zEnd: 400,
+    lengthCm: 400,
+    minClearanceLengthCm: 280 // Guaranteed open zone
   }
 };

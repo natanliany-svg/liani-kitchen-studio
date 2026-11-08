@@ -7,6 +7,7 @@ import { CadBlueprintCanvas } from './components/CadBlueprintCanvas';
 import { SplitCompareView } from './components/SplitCompareView';
 import { CatalogDrawer } from './components/CatalogDrawer';
 import { ParametricInspector } from './components/ParametricInspector';
+import { PhotorealisticGallery } from './components/PhotorealisticGallery';
 import { BomCostModal } from './components/BomCostModal';
 import { ReferenceMediaModal } from './components/ReferenceMediaModal';
 import { ProjectExportModal } from './components/ProjectExportModal';
@@ -30,7 +31,9 @@ export const App: React.FC = () => {
       <main className="flex-1 relative flex overflow-hidden">
         {/* Central Canvas Container */}
         <div className="flex-1 relative flex overflow-hidden">
-          {viewMode === 'compare' ? (
+          {viewMode === 'renders' ? (
+            <PhotorealisticGallery />
+          ) : viewMode === 'compare' ? (
             <SplitCompareView />
           ) : viewMode === '3d' ? (
             <ThreeKitchenCanvas />

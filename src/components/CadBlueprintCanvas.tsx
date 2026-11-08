@@ -11,6 +11,9 @@ interface CadBlueprintCanvasProps {
 }
 
 const getModuleCleanName = (mod: PlacedModule): string => {
+  if (mod.id === 'planB-freezer-lower-cube') return 'מקפיא תחתון';
+  if (mod.id === 'planB-appliance-garage-cube') return 'מקפיא + מכשירים';
+  if (mod.id === 'planA-appliance-garage') return 'ארון מכשירים (שיש)';
   if (mod.applianceType === 'cooktop') return 'כיריים 80';
   if (mod.applianceType === 'sink') return mod.kosherZone === 'meat' ? 'כיור בשרי' : 'כיור חלבי';
   if (mod.applianceType === 'fridge') return 'מקרר 90';
@@ -20,10 +23,10 @@ const getModuleCleanName = (mod: PlacedModule): string => {
   if (mod.sku.includes('PANTRY')) return 'מזווה 80';
   if (mod.sku.includes('DRAW')) return 'מגירות';
   if (mod.sku.includes('PESACH')) return 'ארון פסח';
-  if (mod.sku.includes('DISHWASHER')) return 'מדיח';
+  if (mod.sku.includes('DISHWASHER') || mod.applianceType === 'dishwasher') return 'מדיח';
   if (mod.sku.includes('CORNER') || mod.sku.includes('RETURN')) return 'שיש ר\'';
-  if (mod.sku.includes('TABLE')) return 'שולחן שבת';
-  if (mod.sku.includes('APPL')) return 'מכשירים';
+  if (mod.sku.includes('APPL') || mod.applianceType === 'appliance-garage') return 'ארון מכשירים';
+  if (mod.sku.includes('PREP')) return 'משטח חלבי';
   return mod.nameHe.split(' ')[0] || '';
 };
 
@@ -42,24 +45,32 @@ export const CadBlueprintCanvas: React.FC<CadBlueprintCanvasProps> = ({
 
   const validationIssues = useMemo(() => validateKitchen(modules), [modules]);
 
-  // Architectural layers: overhead wall units rendered first, floor/tall/base units on top
+  // Architectural layers: overhead wall units rendered first, floor/tall/base units on top, over-counter units highest
   const sortedModules = useMemo(() => {
     return [...modules].sort((a, b) => {
-      const aScore = a.category === 'wall' ? 0 : 1;
-      const bScore = b.category === 'wall' ? 0 : 1;
-      return aScore - bScore;
+      const getScore = (m: PlacedModule) => {
+        if (m.sku.includes('PESACH')) return 0;
+        if (m.category === 'wall' && m.position[1] >= 140) return 1;
+        if (m.category === 'base') return 2;
+        if (m.category === 'tall' || m.applianceType === 'freezer' || m.applianceType === 'fridge') return 3;
+        if (m.sku.includes('GARAGE') || m.applianceType === 'appliance-garage') return 4;
+        return 2;
+      };
+      return getScore(a) - getScore(b);
     });
   }, [modules]);
 
   const isCoveredByFloorUnit = useCallback((mod: PlacedModule) => {
-    if (mod.category !== 'wall') return false;
-    return modules.some(other => 
-      other.id !== mod.id &&
-      other.category !== 'wall' &&
-      other.wallId === mod.wallId &&
-      Math.abs(other.position[0] - mod.position[0]) < 15 &&
-      Math.abs(other.position[2] - mod.position[2]) < 15
-    );
+    if (mod.id === 'planB-freezer-lower-cube') return true; // Label handled by upper cube
+    if (mod.sku.includes('PESACH')) {
+      return modules.some(other => 
+        other.id !== mod.id &&
+        !other.sku.includes('PESACH') &&
+        Math.abs(other.position[0] - mod.position[0]) < 20 &&
+        Math.abs(other.position[2] - mod.position[2]) < 20
+      );
+    }
+    return false;
   }, [modules]);
 
   const svgRef = useRef<SVGSVGElement>(null);
@@ -304,7 +315,7 @@ export const CadBlueprintCanvas: React.FC<CadBlueprintCanvasProps> = ({
     });
 
     doc.setFontSize(18);
-    doc.text(`Liani Kitchen Studio - Plan ${activePlan.toUpperCase()}`, 20, 20);
+    doc.text(`Achinoam Kitchens - Family Or (Client 3155) - Plan ${activePlan.toUpperCase()}`, 20, 20);
     doc.setFontSize(11);
     doc.text(`Dimensions: 317 cm x 705 cm | Height: 246 cm (Zero Ceiling Dead Space)`, 20, 28);
     doc.text(`Niches: Niche 1 (263 cm), Niche 2 (268 cm), Niche 3 (124 cm), Pillars 25x89 cm`, 20, 35);
@@ -322,7 +333,7 @@ export const CadBlueprintCanvas: React.FC<CadBlueprintCanvasProps> = ({
       yPos += 7;
     });
 
-    doc.save(`Liani-Kitchen-Blueprint-${activePlan}.pdf`);
+    doc.save(`Achinoam-Kitchen-Or-Blueprint-${activePlan}.pdf`);
   };
 
   return (
@@ -513,25 +524,43 @@ export const CadBlueprintCanvas: React.FC<CadBlueprintCanvasProps> = ({
           </g>
         ))}
 
-        {/* Entrance Return Wall (44 cm) */}
-        <rect
-          x="0"
-          y="-14"
-          width={ROOM_SPEC.entranceReturnWallCm}
-          height="14"
-          fill="#334155"
-          stroke="#64748b"
-          strokeWidth="1.5"
-        />
-        <text
-          x={ROOM_SPEC.entranceReturnWallCm / 2}
-          y="-4"
-          fill="#94a3b8"
-          fontSize="7"
-          textAnchor="middle"
-        >
-          קיר 44
-        </text>
+        {/* Entrance Return Wall (50 cm depth architectural jamb, line 0 flush with appliances) */}
+        <g>
+          <rect
+            x="0"
+            y="-22"
+            width={89}
+            height="22"
+            fill="#334155"
+            stroke="#64748b"
+            strokeWidth="1.5"
+          />
+          <line x1="0" y1="-22" x2="89" y2="0" stroke="#475569" strokeWidth="1" />
+          <line x1="0" y1="0" x2="89" y2="-22" stroke="#475569" strokeWidth="1" />
+          <text
+            x="44.5"
+            y="-7"
+            fill="#cbd5e1"
+            fontSize="7.5"
+            fontWeight="bold"
+            textAnchor="middle"
+          >
+            קיר כניסה 50 (קו 0 נקי)
+          </text>
+
+          {/* Entrance Doorway Clearance Opening (>90 cm) */}
+          <line x1="89" y1="0" x2="200" y2="0" stroke="#38bdf8" strokeWidth="1.5" strokeDasharray="3 2" />
+          <text
+            x="145"
+            y="-6"
+            fill="#38bdf8"
+            fontSize="7"
+            fontWeight="bold"
+            textAnchor="middle"
+          >
+            פתח כניסה 110 ס"מ (פתוח ללא חסימה)
+          </text>
+        </g>
 
         {/* ================= NICHE DIMENSION CHAINS ================= */}
         {showDimensions && (
@@ -644,11 +673,11 @@ export const CadBlueprintCanvas: React.FC<CadBlueprintCanvasProps> = ({
                 y={mod.position[2]}
                 width={rectW}
                 height={rectH}
-                fill={isSelected ? '#0284c7' : isCabinetCollision ? '#ef4444' : fillColor}
-                fillOpacity={isCovered ? 0.2 : mod.category === 'wall' ? 0.65 : 1}
-                stroke={isSelected ? '#ffffff' : isCabinetCollision ? '#dc2626' : mod.category === 'wall' ? '#94a3b8' : '#334155'}
-                strokeWidth={isSelected || isCabinetCollision ? '2' : '1'}
-                strokeDasharray={isCabinetCollision ? '4 2' : mod.category === 'wall' ? '3 2' : undefined}
+                fill={isSelected ? '#0284c7' : isCabinetCollision ? '#ef4444' : (mod.id === 'planA-appliance-garage' || mod.id === 'planB-appliance-garage-cube') ? '#0284c7' : fillColor}
+                fillOpacity={isCovered ? 0.2 : (mod.id === 'planA-appliance-garage' || mod.id === 'planB-appliance-garage-cube') ? 0.85 : mod.category === 'wall' ? 0.65 : 1}
+                stroke={isSelected ? '#ffffff' : isCabinetCollision ? '#dc2626' : (mod.id === 'planA-appliance-garage' || mod.id === 'planB-appliance-garage-cube') ? '#00e5ff' : mod.category === 'wall' ? '#94a3b8' : '#334155'}
+                strokeWidth={isSelected || isCabinetCollision ? '2' : (mod.id === 'planA-appliance-garage' || mod.id === 'planB-appliance-garage-cube') ? '2' : '1'}
+                strokeDasharray={isCabinetCollision ? '4 2' : (mod.id === 'planA-appliance-garage' || mod.id === 'planB-appliance-garage-cube') ? '3 2' : mod.category === 'wall' ? '3 2' : undefined}
                 rx="2"
                 className="transition-colors"
               />
@@ -862,7 +891,11 @@ export const CadBlueprintCanvas: React.FC<CadBlueprintCanvasProps> = ({
                       fontWeight="bold"
                       textAnchor="middle"
                     >
-                      {getModuleCleanName(mod)}
+                      {mod.id === 'planB-appliance-garage-cube'
+                        ? 'מקפיא + מכשירים'
+                        : mod.id === 'planA-appliance-garage'
+                        ? 'ארון מכשירים'
+                        : getModuleCleanName(mod)}
                     </text>
                     <text
                       x={mod.position[0] + rectW / 2}
@@ -875,7 +908,11 @@ export const CadBlueprintCanvas: React.FC<CadBlueprintCanvasProps> = ({
                       fontWeight="600"
                       textAnchor="middle"
                     >
-                      {width} ס"מ
+                      {mod.id === 'planB-appliance-garage-cube' 
+                        ? 'קוביה מעל קוביה 60' 
+                        : mod.id === 'planA-appliance-garage'
+                        ? 'על השיש 60 ס"מ'
+                        : `${width} ס"מ`}
                     </text>
                   </>
                 ) : !isCovered ? (

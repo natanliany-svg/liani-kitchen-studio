@@ -229,10 +229,11 @@ export const ThreeKitchenCanvas: React.FC<ThreeKitchenCanvasProps> = ({
     rightBackingMesh.position.set(-6, ROOM_SPEC.heightCm / 2, ROOM_SPEC.depthCm / 2);
     group.add(rightBackingMesh);
 
-    // 5. Entrance Return Wall (44 cm wide x 89 cm depth)
-    const entWallGeo = new THREE.BoxGeometry(ROOM_SPEC.entranceReturnWallCm, ROOM_SPEC.heightCm, 12);
+    // 5. Entrance Return Wall (50 cm depth x 89 cm width architectural jamb)
+    const entWallGeo = new THREE.BoxGeometry(89, ROOM_SPEC.heightCm, 20);
     const entWallMesh = new THREE.Mesh(entWallGeo, wallMat);
-    entWallMesh.position.set(ROOM_SPEC.entranceReturnWallCm / 2, ROOM_SPEC.heightCm / 2, -6);
+    entWallMesh.position.set(89 / 2, ROOM_SPEC.heightCm / 2, -10);
+    entWallMesh.receiveShadow = true;
     group.add(entWallMesh);
 
     wallsRef.current = {
@@ -870,6 +871,16 @@ export const ThreeKitchenCanvas: React.FC<ThreeKitchenCanvasProps> = ({
     const animate = () => {
       animFrameIdRef.current = requestAnimationFrame(animate);
       controls.update();
+
+      // Dynamic smart wall culling: hide exterior walls when camera is outside them so they NEVER block view or mouse clicks!
+      if (wallsRef.current) {
+        const { leftWall, rightBacking, backWall, entranceWall } = wallsRef.current;
+        if (leftWall) leftWall.visible = camera.position.x <= ROOM_SPEC.widthCm + 35;
+        if (rightBacking) rightBacking.visible = camera.position.x >= -35;
+        if (backWall) backWall.visible = camera.position.z <= ROOM_SPEC.depthCm + 35;
+        if (entranceWall) entranceWall.visible = camera.position.z >= -35;
+      }
+
       renderer.render(scene, camera);
     };
     animate();

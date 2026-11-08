@@ -75,7 +75,28 @@ assert(n1UsageB.usedCm === 240, `Plan B Niche 1 used space (${n1UsageB.usedCm} c
 assert(n1UsageB.remainingCm === 23, `Plan B Niche 1 remaining clearance (${n1UsageB.remainingCm} cm) must be 23 cm`);
 
 const n3UsageB = nicheUsageB.find(n => n.id === 'right-niche3')!;
-assert(n3UsageB.usedCm === 124, `Plan B Niche 3 used space (${n3UsageB.usedCm} cm) must be 124 cm (65 freezer + 59 utility cabinet)`);
+assert(n3UsageB.usedCm === 124, `Plan B Niche 3 used space (${n3UsageB.usedCm} cm) must be 124 cm (60 freezer cube + 64 corner return)`);
+
+// Stacked Cube Assertion (קוביה מעל קוביה)
+const bFreezer = PLAN_B_MODULES.find(m => m.id === 'planB-freezer-lower-cube')!;
+const bGarage = PLAN_B_MODULES.find(m => m.id === 'planB-appliance-garage-cube')!;
+assert(Boolean(bFreezer && bGarage), 'Plan B must have stacked freezer and appliance garage');
+assert(bFreezer.position[2] === bGarage.position[2], 'Plan B freezer and appliance garage must have same Z coordinate (קוביה מעל קוביה)');
+assert(bFreezer.position[1] === 0 && bGarage.position[1] === 90, 'Plan B freezer is bottom cube (Y=0..90) and garage is upper cube (Y=90..200)');
+
+// Cooktop on Right assertions
+assert(PLAN_A_MODULES.find(m => m.applianceType === 'cooktop')!.position[2] === 288, 'Plan A cooktop must be on right at Z=288');
+assert(PLAN_B_MODULES.find(m => m.applianceType === 'cooktop')!.position[2] === 288, 'Plan B cooktop must be on right at Z=288');
+
+// Dining Table Removed from both plans
+assert(!PLAN_A_MODULES.some(m => m.applianceType === 'table'), 'Plan A must have NO dining table in central floor');
+assert(!PLAN_B_MODULES.some(m => m.applianceType === 'table'), 'Plan B must have NO dining table in central floor');
+
+// Continuous Countertop in Plan A
+const aPrep = PLAN_A_MODULES.find(m => m.id === 'planA-dairy-prep-110')!;
+const aGarage = PLAN_A_MODULES.find(m => m.id === 'planA-appliance-garage')!;
+assert(aPrep.position[0] + aPrep.dimensions.width === 317, 'Plan A base countertop must run continuously to X=317');
+assert(aGarage.position[1] === 90, 'Plan A appliance garage must sit directly on the countertop at Y=90');
 
 const issuesB = validateKitchen(PLAN_B_MODULES);
 const errorsB = issuesB.filter(i => i.type === 'error');

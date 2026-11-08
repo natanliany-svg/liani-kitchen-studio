@@ -34,8 +34,8 @@ export function calculateNicheUsage(modules: PlacedModule[]): NicheInfo[] {
   const backModules = floorModules.filter(m => getEffectiveWall(m) === 'back-wall');
   const backUsed = backModules.reduce((acc, m) => acc + (m.rotation === 0 || m.rotation === 180 ? m.dimensions.width : m.dimensions.depth), 0);
 
-  // Left Wall Active zone: 240 cm
-  const leftModules = floorModules.filter(m => getEffectiveWall(m) === 'left-wall' && m.position[2] >= 465);
+  // Left Wall Active zone: 240 cm (Z from 400 to 640)
+  const leftModules = floorModules.filter(m => getEffectiveWall(m) === 'left-wall' && m.position[2] >= 390);
   const leftUsed = leftModules.reduce((acc, m) => acc + (m.rotation === 90 || m.rotation === 270 ? m.dimensions.width : m.dimensions.depth), 0);
 
   return [
@@ -272,7 +272,13 @@ export function validateKitchen(modules: PlacedModule[]): ValidationIssue[] {
       sweepMaxX = b.maxX + swingExtent;
     } else if (mod.rotation === 0) {
       // Back wall: door sweeps out towards -Z into room
-      const swingExtent = mod.doorType === 'drawers' ? 35 : mod.dimensions.depth;
+      const swingExtent = mod.doorType === 'drawers' 
+        ? 35 
+        : mod.doorType === 'double-door' 
+        ? mod.dimensions.width / 2 
+        : mod.doorType === 'lift-up' 
+        ? 25 
+        : Math.min(mod.dimensions.width, 60);
       sweepMinZ = b.minZ - swingExtent;
     } else if (mod.rotation === 270) {
       // Left wall: door sweeps out towards -X into room
