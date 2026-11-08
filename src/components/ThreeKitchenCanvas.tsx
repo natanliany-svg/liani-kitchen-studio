@@ -498,6 +498,12 @@ export const ThreeKitchenCanvas: React.FC<ThreeKitchenCanvasProps> = ({
           rightDoor.position.set(depth + 0.9, height / 2, (3 * width) / 4 + slide);
           doorPivot.add(leftDoor);
           doorPivot.add(rightDoor);
+        } else if (mod.doorType === 'tambour') {
+          const rollUp = openPercent * (height - 4);
+          const shutterGeo = new THREE.BoxGeometry(2, Math.max(2, height - 2 - rollUp), width - 2);
+          const shutterMesh = new THREE.Mesh(shutterGeo, frontMat);
+          shutterMesh.position.set(depth + 1, (height - rollUp) / 2 + rollUp, width / 2);
+          doorPivot.add(shutterMesh);
         } else if (mod.doorType !== 'none') {
           doorPivot.position.set(depth, 0, 0);
           doorPivot.rotation.y = openPercent * (Math.PI / 1.7);
@@ -581,6 +587,12 @@ export const ThreeKitchenCanvas: React.FC<ThreeKitchenCanvasProps> = ({
           rightDoor.position.set((3 * width) / 4 + slide, height / 2, -0.9);
           doorPivot.add(leftDoor);
           doorPivot.add(rightDoor);
+        } else if (mod.doorType === 'tambour') {
+          const rollUp = openPercent * (height - 4);
+          const shutterGeo = new THREE.BoxGeometry(width - 2, Math.max(2, height - 2 - rollUp), 2);
+          const shutterMesh = new THREE.Mesh(shutterGeo, frontMat);
+          shutterMesh.position.set(width / 2, (height - rollUp) / 2 + rollUp, -1);
+          doorPivot.add(shutterMesh);
         } else if (mod.doorType !== 'none') {
           doorPivot.position.set(0, 0, 0);
           doorPivot.rotation.y = -openPercent * (Math.PI / 1.7);

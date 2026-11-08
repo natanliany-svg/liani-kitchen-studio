@@ -700,6 +700,15 @@ export const CadBlueprintCanvas: React.FC<CadBlueprintCanvasProps> = ({
                           strokeDasharray="2 2"
                           opacity={mod.openPercent > 0.05 ? 1 : 0.45}
                         />
+                      ) : mod.doorType === 'tambour' ? (
+                        <path
+                          d={`M ${mod.position[0] + depth} ${mod.position[2]} Q ${mod.position[0] + depth + 14} ${mod.position[2] + width / 2} ${mod.position[0] + depth} ${mod.position[2] + width}`}
+                          fill="none"
+                          stroke="#38bdf8"
+                          strokeWidth={1.5}
+                          strokeDasharray="2 2"
+                          opacity={0.85}
+                        />
                       ) : mod.doorType === 'double-door' ? (
                         <>
                           <path
@@ -746,6 +755,15 @@ export const CadBlueprintCanvas: React.FC<CadBlueprintCanvasProps> = ({
                           strokeWidth={isDoorBlocked ? 2 : 1}
                           strokeDasharray="2 2"
                           opacity={mod.openPercent > 0.05 ? 1 : 0.45}
+                        />
+                      ) : mod.doorType === 'tambour' ? (
+                        <path
+                          d={`M ${mod.position[0]} ${mod.position[2]} Q ${mod.position[0] + width / 2} ${mod.position[2] - 14} ${mod.position[0] + width} ${mod.position[2]}`}
+                          fill="none"
+                          stroke="#38bdf8"
+                          strokeWidth={1.5}
+                          strokeDasharray="2 2"
+                          opacity={0.85}
                         />
                       ) : mod.doorType === 'double-door' ? (
                         <>
@@ -891,10 +909,12 @@ export const CadBlueprintCanvas: React.FC<CadBlueprintCanvasProps> = ({
                       fontWeight="bold"
                       textAnchor="middle"
                     >
-                      {mod.id === 'planB-appliance-garage-cube'
-                        ? 'מקפיא + מכשירים'
-                        : mod.id === 'planA-appliance-garage'
-                        ? 'ארון מכשירים'
+                      {mod.id === 'planA-appliance-garage' || mod.id === 'planB-appliance-garage-tambour'
+                        ? 'ארון מכשירים (תריס)'
+                        : mod.id === 'planA-niche3-wall-124' || mod.id === 'planB-niche3-wall-corner'
+                        ? 'ארונות עליונים ב-ר\''
+                        : mod.id === 'planA-dairy-wall-cabinets' || mod.id === 'planB-dairy-wall-sink-zone'
+                        ? 'עליון מעל כיור'
                         : getModuleCleanName(mod)}
                     </text>
                     <text
@@ -908,10 +928,8 @@ export const CadBlueprintCanvas: React.FC<CadBlueprintCanvasProps> = ({
                       fontWeight="600"
                       textAnchor="middle"
                     >
-                      {mod.id === 'planB-appliance-garage-cube' 
-                        ? 'קוביה מעל קוביה 60' 
-                        : mod.id === 'planA-appliance-garage'
-                        ? 'על השיש 60 ס"מ'
+                      {mod.id === 'planA-appliance-garage' || mod.id === 'planB-appliance-garage-tambour'
+                        ? 'תריס נגלל על השיש' 
                         : `${width} ס"מ`}
                     </text>
                   </>

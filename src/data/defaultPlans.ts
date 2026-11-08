@@ -2,8 +2,8 @@ import { PlacedModule } from '../types/kitchen';
 
 export const PLAN_A_MODULES: PlacedModule[] = [
   // ==================== NICHE 1 (ENTRANCE RIGHT: 263 cm) ====================
-  // Flush Zero-Line Alignment with 50cm Entrance Wall: 0cm to 240cm (23cm clearance)
-  // Freezer 60cm at Entrance (קו 0 עם קיר הכניסה)
+  // Flush Zero-Line Alignment with 50cm Entrance Wall: 23cm Entrance setback, abutting Pillar 1 (23cm to 263cm)
+  // Freezer 60cm
   {
     id: 'planA-freezer-tall',
     sku: 'REF-FRZ-60',
@@ -11,14 +11,14 @@ export const PLAN_A_MODULES: PlacedModule[] = [
     category: 'appliance',
     kosherZone: 'neutral',
     wallId: 'right-niche1',
-    position: [0, 0, 0], // Flush 0cm with entrance wall
+    position: [0, 0, 23], // 23cm setback at entrance, abuts fridge 1
     rotation: 90,
     dimensions: { width: 60, height: 190, depth: 75 },
     doorType: 'single-door',
     openPercent: 0,
     isAppliance: true,
     applianceType: 'freezer',
-    notesHe: 'עומק 75 ס"מ נבלע במלואו בנישת 89 ס"מ – אינו חוסם את פתח הכניסה כלל',
+    notesHe: 'עומק 75 ס"מ נבלע במלואו בנישת 89 ס"מ – מרווח 23 ס"מ פתוח בכניסה',
     priceIls: 4200
   },
   {
@@ -28,7 +28,7 @@ export const PLAN_A_MODULES: PlacedModule[] = [
     category: 'wall',
     kosherZone: 'neutral',
     wallId: 'right-niche1',
-    position: [0, 190, 0],
+    position: [0, 190, 23],
     rotation: 90,
     dimensions: { width: 60, height: 56, depth: 75 },
     doorType: 'lift-up',
@@ -45,7 +45,7 @@ export const PLAN_A_MODULES: PlacedModule[] = [
     category: 'appliance',
     kosherZone: 'neutral',
     wallId: 'right-niche1',
-    position: [0, 0, 60],
+    position: [0, 0, 83],
     rotation: 90,
     dimensions: { width: 90, height: 190, depth: 75 },
     doorType: 'double-door',
@@ -61,7 +61,7 @@ export const PLAN_A_MODULES: PlacedModule[] = [
     category: 'wall',
     kosherZone: 'neutral',
     wallId: 'right-niche1',
-    position: [0, 190, 60],
+    position: [0, 190, 83],
     rotation: 90,
     dimensions: { width: 90, height: 56, depth: 75 },
     doorType: 'lift-up',
@@ -69,7 +69,7 @@ export const PLAN_A_MODULES: PlacedModule[] = [
     priceIls: 1650
   },
 
-  // Refrigerator 2 (90cm)
+  // Refrigerator 2 (90cm) - abuts Pillar 1 at Z=263
   {
     id: 'planA-fridge2',
     sku: 'REF-FRD-90-B',
@@ -77,7 +77,7 @@ export const PLAN_A_MODULES: PlacedModule[] = [
     category: 'appliance',
     kosherZone: 'neutral',
     wallId: 'right-niche1',
-    position: [0, 0, 150],
+    position: [0, 0, 173],
     rotation: 90,
     dimensions: { width: 90, height: 190, depth: 75 },
     doorType: 'double-door',
@@ -93,7 +93,7 @@ export const PLAN_A_MODULES: PlacedModule[] = [
     category: 'wall',
     kosherZone: 'neutral',
     wallId: 'right-niche1',
-    position: [0, 190, 150],
+    position: [0, 190, 173],
     rotation: 90,
     dimensions: { width: 90, height: 56, depth: 75 },
     doorType: 'lift-up',
@@ -214,11 +214,11 @@ export const PLAN_A_MODULES: PlacedModule[] = [
     notesHe: 'כולל מתקן פינה נשלף LeMans ושקעי כוח לשעון שבת',
     priceIls: 3900
   },
-  // Niche 3 Upper Pesach Cabinets
+  // Niche 3 Upper Pesach Cabinets connecting in L-shape to Back Wall
   {
     id: 'planA-niche3-wall-124',
     sku: 'WALL-PESACH-124',
-    nameHe: 'המשך ארונות עליונים עד התקרה 246 ס"מ (נישה 3)',
+    nameHe: 'ארונות עליונים ב-ר\' (נישה 3 עד פינת הקיר האחורי)',
     category: 'wall',
     kosherZone: 'pareve',
     wallId: 'right-niche3',
@@ -227,6 +227,7 @@ export const PLAN_A_MODULES: PlacedModule[] = [
     dimensions: { width: 124, height: 93, depth: 38 },
     doorType: 'double-door',
     openPercent: 0,
+    notesHe: 'חיבור פינתי רציף ב-ר\' לארונות הקיר האחורי החלבי',
     priceIls: 2900
   },
 
@@ -280,23 +281,23 @@ export const PLAN_A_MODULES: PlacedModule[] = [
     notesHe: 'משטח שיש רצוף העובר מתחת לארון המכשירים עד קיר שמאל!',
     priceIls: 4100
   },
-  // Corner Appliance Garage sitting ON TOP of the Countertop (Y=90..200)
+  // Corner Appliance Garage sitting ON TOP of the Countertop (Y=90..200) with Curved Tambour Shutter
   {
     id: 'planA-appliance-garage',
-    sku: 'TALL-GARAGE-60',
-    nameHe: 'ארון מכשירים על השיש 60 ס"מ (דלתות כיס Pocket Doors למיקסר)',
+    sku: 'APPL-TAMBOUR-60',
+    nameHe: 'ארון מכשירים פינתי על גבי השיש (תריס נגלל בחצי עיגול)',
     category: 'wall',
     kosherZone: 'pareve',
     wallId: 'back-wall',
     position: [257, 90, 645],
     rotation: 0,
     dimensions: { width: 60, height: 110, depth: 60 },
-    doorType: 'pocket',
+    doorType: 'tambour',
     openPercent: 0,
     isAppliance: true,
     applianceType: 'appliance-garage',
-    notesHe: 'יושב ישירות על השיש בגובה 90 עד 200 ס"מ! דלתות כיס נבלעות, שקעי כוח ומדף נשלף',
-    priceIls: 3800
+    notesHe: 'יושב ישירות על השיש! תריס נגלל קשתי (Tambour) לנצילות מקסימלית ואפס התנגשות עם דלתות סמוכות',
+    priceIls: 4200
   },
   // Appliance Garage Upper Pesach Unit (Y=200..246)
   {
@@ -313,20 +314,21 @@ export const PLAN_A_MODULES: PlacedModule[] = [
     openPercent: 0,
     priceIls: 1300
   },
-  // Dairy Upper Cabinets Across Back Wall (X=65 to X=257: 192cm wide, up to 246cm)
+  // Dairy Upper Cabinets Across Back Wall stopping above the sink (X=38 to X=207: 169cm)
   {
     id: 'planA-dairy-wall-cabinets',
-    sku: 'WALL-DAIRY-192',
-    nameHe: 'רצף ארונות עליונים חלביים עד התקרה 246 ס"מ (2 קומות)',
+    sku: 'WALL-DAIRY-SINK-ZONE',
+    nameHe: 'ארונות עליונים חלביים מעל הכיור (עוצרים מעל הכיור)',
     category: 'wall',
     kosherZone: 'dairy',
     wallId: 'back-wall',
-    position: [65, 153, 667],
+    position: [38, 153, 667],
     rotation: 0,
-    dimensions: { width: 192, height: 93, depth: 38 },
+    dimensions: { width: 169, height: 93, depth: 38 },
     doorType: 'lift-up',
     openPercent: 0,
-    priceIls: 5400
+    notesHe: 'ארונות עליונים הממשיכים את פינת ה-ר\' מנישה 3 ונעצרים מעל הכיור החלבי (משאירים חלל פתוח מעל משטח ההמשך)',
+    priceIls: 4800
   },
 
   // ==================== LEFT WALL (ACTIVE BAKING & PANTRY: 240 cm) ====================
@@ -369,7 +371,7 @@ export const PLAN_A_MODULES: PlacedModule[] = [
 
 export const PLAN_B_MODULES: PlacedModule[] = [
   // ==================== NICHE 1 (ENTRANCE RIGHT: 263 cm) ====================
-  // Flush Zero-Line Alignment with 50cm Entrance Wall: 0cm to 240cm (23cm clearance)
+  // Flush Zero-Line Alignment with 50cm Entrance Wall: 23cm Entrance setback, abutting Pillar 1 (23cm to 263cm)
   // Refrigerator 1 (90cm)
   {
     id: 'planB-fridge1',
@@ -378,14 +380,14 @@ export const PLAN_B_MODULES: PlacedModule[] = [
     category: 'appliance',
     kosherZone: 'neutral',
     wallId: 'right-niche1',
-    position: [0, 0, 0],
+    position: [0, 0, 23],
     rotation: 90,
     dimensions: { width: 90, height: 190, depth: 75 },
     doorType: 'double-door',
     openPercent: 0,
     isAppliance: true,
     applianceType: 'fridge',
-    notesHe: 'בקו 0 נקי עם קיר הכניסה, אינו חוסם את פתח המעבר',
+    notesHe: 'מרווח 23 ס"מ פתוח בכניסה, אינו חוסם את פתח המעבר',
     priceIls: 7800
   },
   {
@@ -395,7 +397,7 @@ export const PLAN_B_MODULES: PlacedModule[] = [
     category: 'wall',
     kosherZone: 'neutral',
     wallId: 'right-niche1',
-    position: [0, 190, 0],
+    position: [0, 190, 23],
     rotation: 90,
     dimensions: { width: 90, height: 56, depth: 75 },
     doorType: 'lift-up',
@@ -411,7 +413,7 @@ export const PLAN_B_MODULES: PlacedModule[] = [
     category: 'appliance',
     kosherZone: 'neutral',
     wallId: 'right-niche1',
-    position: [0, 0, 90],
+    position: [0, 0, 113],
     rotation: 90,
     dimensions: { width: 90, height: 190, depth: 75 },
     doorType: 'double-door',
@@ -427,7 +429,7 @@ export const PLAN_B_MODULES: PlacedModule[] = [
     category: 'wall',
     kosherZone: 'neutral',
     wallId: 'right-niche1',
-    position: [0, 190, 90],
+    position: [0, 190, 113],
     rotation: 90,
     dimensions: { width: 90, height: 56, depth: 75 },
     doorType: 'lift-up',
@@ -435,7 +437,7 @@ export const PLAN_B_MODULES: PlacedModule[] = [
     priceIls: 1650
   },
 
-  // Baking Tower 60cm (2 Ovens + Microwave + Pesach Cabinet)
+  // Baking Tower 60cm (2 Ovens + Microwave + Pesach Cabinet) - abuts Pillar 1 at Z=263
   {
     id: 'planB-baking-tower-60',
     sku: 'TALL-OVEN-60',
@@ -443,7 +445,7 @@ export const PLAN_B_MODULES: PlacedModule[] = [
     category: 'tall',
     kosherZone: 'pareve',
     wallId: 'right-niche1',
-    position: [0, 0, 180],
+    position: [0, 0, 203],
     rotation: 90,
     dimensions: { width: 60, height: 246, depth: 65 },
     doorType: 'double-door',
@@ -549,12 +551,11 @@ export const PLAN_B_MODULES: PlacedModule[] = [
   },
 
   // ==================== NICHE 3 (RIGHT REAR CORNER: 124 cm) ====================
-  // STACKED CUBE COLUMN (קוביה מעל קוביה 60 ס"מ):
-  // 1. Lower Cube (0-90cm): Built-in Under-Counter Freezer
+  // 1. Lower Built-in Under-Counter Freezer (0-90cm, width 60cm)
   {
     id: 'planB-freezer-lower-cube',
     sku: 'REF-FRZ-CUBE-60',
-    nameHe: 'מקפיא תחתון בנוי 60 ס"מ (קוביה תחתונה 0-90 ס"מ)',
+    nameHe: 'מקפיא תחתון בנוי 60 ס"מ (0-90 ס"מ)',
     category: 'appliance',
     kosherZone: 'neutral',
     wallId: 'right-niche3',
@@ -565,43 +566,10 @@ export const PLAN_B_MODULES: PlacedModule[] = [
     openPercent: 0,
     isAppliance: true,
     applianceType: 'freezer',
-    notesHe: 'קוביה תחתונה: מקפיא מובנה מתחת לארון המכשירים (קוביה מעל קוביה)',
+    notesHe: 'מקפיא מובנה תחתון בנישה 3, מאפשר המשך רציף מעליו',
     priceIls: 4600
   },
-  // 2. Upper Cube (90-200cm): Appliance Cabinet directly above freezer!
-  {
-    id: 'planB-appliance-garage-cube',
-    sku: 'APPL-GARAGE-CUBE-60',
-    nameHe: 'ארון מכשירים ומיקסר 60 ס"מ (קוביה עליונה מעל מקפיא 90-200 ס"מ)',
-    category: 'wall',
-    kosherZone: 'pareve',
-    wallId: 'right-niche3',
-    position: [0, 90, 581],
-    rotation: 90,
-    dimensions: { width: 60, height: 110, depth: 75 },
-    doorType: 'pocket',
-    openPercent: 0,
-    isAppliance: true,
-    applianceType: 'appliance-garage',
-    notesHe: 'קוביה מעל קוביה! יושב ישירות מעל המקפיא – דלתות כיס, מדף נשלף כבד ושקעי כוח',
-    priceIls: 3900
-  },
-  // 3. Top Cube (200-246cm): Pesach storage up to ceiling
-  {
-    id: 'planB-niche3-pesach-top',
-    sku: 'WALL-PESACH-CUBE-60',
-    nameHe: 'קלפה עליונה לפסח 60 ס"מ מעל ארון מכשירים עד 246 ס"מ',
-    category: 'wall',
-    kosherZone: 'neutral',
-    wallId: 'right-niche3',
-    position: [0, 200, 581],
-    rotation: 90,
-    dimensions: { width: 60, height: 46, depth: 75 },
-    doorType: 'lift-up',
-    openPercent: 0,
-    priceIls: 1400
-  },
-  // Remaining 64cm in Niche 3: Base Countertop connecting in L-shape to Back Wall!
+  // 2. Remaining 64cm in Niche 3: Base Countertop connecting in L-shape to Back Wall!
   {
     id: 'planB-niche3-corner-base',
     sku: 'BASE-RETURN-64',
@@ -616,6 +584,40 @@ export const PLAN_B_MODULES: PlacedModule[] = [
     openPercent: 0,
     notesHe: 'משטח עבודה רצוף המתחבר ישירות לקיר האחורי החלבי',
     priceIls: 2600
+  },
+  // 3. Compact Appliance Garage on Countertop with Curved Tambour Shutter (Y=90..153)
+  {
+    id: 'planB-appliance-garage-tambour',
+    sku: 'APPL-TAMBOUR-CORNER-55',
+    nameHe: 'ארון מכשירים פינתי על גבי השיש (תריס נגלל בחצי עיגול)',
+    category: 'wall',
+    kosherZone: 'pareve',
+    wallId: 'right-niche3',
+    position: [0, 90, 645],
+    rotation: 90,
+    dimensions: { width: 60, height: 63, depth: 60 },
+    doorType: 'tambour',
+    openPercent: 0,
+    isAppliance: true,
+    applianceType: 'appliance-garage',
+    notesHe: 'יושב ישירות על השיש מתחת לארונות העליונים! תריס קשתי נגלל (Tambour) לנצילות מקסימלית',
+    priceIls: 3900
+  },
+  // 4. Upper Kitchen Cabinets in L-shape connecting Niche 3 to Back Wall (Y=153..246, height 93cm)
+  {
+    id: 'planB-niche3-wall-corner',
+    sku: 'WALL-CORNER-124',
+    nameHe: 'ארונות עליונים ב-ר\' (נישה 3 עד פינת הקיר האחורי)',
+    category: 'wall',
+    kosherZone: 'pareve',
+    wallId: 'right-niche3',
+    position: [0, 153, 581],
+    rotation: 90,
+    dimensions: { width: 124, height: 93, depth: 38 },
+    doorType: 'lift-up',
+    openPercent: 0,
+    notesHe: 'ארונות עליונים המכסים את שטח הנישה ומתחברים ב-ר\' לארונות הקיר החלבי עד התקרה 246 ס"מ',
+    priceIls: 3400
   },
 
   // ==================== BACK WALL (DAIRY WALL: 317 cm - OPEN CONTINUOUS COUNTER) ====================
@@ -667,20 +669,21 @@ export const PLAN_B_MODULES: PlacedModule[] = [
     notesHe: 'משטח שיש פתוח ומרווח המתחבר ב-ר\' לקיר שמאל',
     priceIls: 4200
   },
-  // Dairy Upper Cabinets Across Full Back Wall (X=65 to X=317: 252cm, up to 246cm)
+  // Dairy Upper Cabinets Across Back Wall stopping above the sink (X=38 to X=145: 107cm)
   {
-    id: 'planB-dairy-wall-252',
-    sku: 'WALL-DAIRY-252',
-    nameHe: 'רצף ארונות עליונים חלביים 252 ס"מ עד התקרה 246 ס"מ',
+    id: 'planB-dairy-wall-sink-zone',
+    sku: 'WALL-DAIRY-SINK-ZONE-B',
+    nameHe: 'ארונות עליונים חלביים מעל הכיור (עוצרים מעל הכיור)',
     category: 'wall',
     kosherZone: 'dairy',
     wallId: 'back-wall',
-    position: [65, 153, 667],
+    position: [38, 153, 667],
     rotation: 0,
-    dimensions: { width: 252, height: 93, depth: 38 },
+    dimensions: { width: 107, height: 93, depth: 38 },
     doorType: 'lift-up',
     openPercent: 0,
-    priceIls: 6200
+    notesHe: 'ארונות עליונים הממשיכים את פינת ה-ר\' מנישה 3 ונעצרים מעל הכיור החלבי (משאירים חלל פתוח מעל המדיח והמשטח)',
+    priceIls: 3600
   },
 
   // ==================== LEFT WALL (MAXIMIZED OPEN SPACE: >280 cm FREE!) ====================

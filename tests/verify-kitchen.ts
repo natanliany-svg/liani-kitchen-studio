@@ -77,12 +77,12 @@ assert(n1UsageB.remainingCm === 23, `Plan B Niche 1 remaining clearance (${n1Usa
 const n3UsageB = nicheUsageB.find(n => n.id === 'right-niche3')!;
 assert(n3UsageB.usedCm === 124, `Plan B Niche 3 used space (${n3UsageB.usedCm} cm) must be 124 cm (60 freezer cube + 64 corner return)`);
 
-// Stacked Cube Assertion (קוביה מעל קוביה)
+// Niche 3 Tambour Appliance Garage & L-Corner Cabinets Assertion
 const bFreezer = PLAN_B_MODULES.find(m => m.id === 'planB-freezer-lower-cube')!;
-const bGarage = PLAN_B_MODULES.find(m => m.id === 'planB-appliance-garage-cube')!;
-assert(Boolean(bFreezer && bGarage), 'Plan B must have stacked freezer and appliance garage');
-assert(bFreezer.position[2] === bGarage.position[2], 'Plan B freezer and appliance garage must have same Z coordinate (קוביה מעל קוביה)');
-assert(bFreezer.position[1] === 0 && bGarage.position[1] === 90, 'Plan B freezer is bottom cube (Y=0..90) and garage is upper cube (Y=90..200)');
+const bGarage = PLAN_B_MODULES.find(m => m.id === 'planB-appliance-garage-tambour')!;
+assert(Boolean(bFreezer && bGarage), 'Plan B must have freezer and tambour appliance garage');
+assert(bFreezer.position[1] === 0 && bGarage.position[1] === 90, 'Plan B freezer is bottom (Y=0..90) and garage sits on countertop (Y=90..153)');
+assert(bGarage.doorType === 'tambour', 'Plan B appliance garage must have curved tambour shutter');
 
 // Cooktop on Right assertions
 assert(PLAN_A_MODULES.find(m => m.applianceType === 'cooktop')!.position[2] === 288, 'Plan A cooktop must be on right at Z=288');
@@ -97,6 +97,7 @@ const aPrep = PLAN_A_MODULES.find(m => m.id === 'planA-dairy-prep-110')!;
 const aGarage = PLAN_A_MODULES.find(m => m.id === 'planA-appliance-garage')!;
 assert(aPrep.position[0] + aPrep.dimensions.width === 317, 'Plan A base countertop must run continuously to X=317');
 assert(aGarage.position[1] === 90, 'Plan A appliance garage must sit directly on the countertop at Y=90');
+assert(aGarage.doorType === 'tambour', 'Plan A appliance garage must have curved tambour shutter');
 
 const issuesB = validateKitchen(PLAN_B_MODULES);
 const errorsB = issuesB.filter(i => i.type === 'error');
