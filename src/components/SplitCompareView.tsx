@@ -13,29 +13,29 @@ export const SplitCompareView: React.FC = () => {
   return (
     <div className="w-full h-full flex flex-col bg-slate-950 text-white select-none">
       {/* Header with comparison toggles */}
-      <div className="bg-slate-900 border-b border-slate-800 px-4 py-2 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <ArrowRightLeft className="w-5 h-5 text-amber-400" />
-          <h2 className="text-sm font-bold">השוואה חיה: תוכנית א' מול תוכנית ב'</h2>
-          <span className="text-xs text-slate-400">אותה מעטפת קשיחה (317×705 | עמודים 89 ס"מ | H=246 ס"מ)</span>
+      <div className="bg-slate-900 border-b border-slate-800 px-3 sm:px-4 py-2 flex items-center justify-between shrink-0">
+        <div className="flex items-center gap-2 sm:gap-3">
+          <ArrowRightLeft className="w-4 h-4 text-amber-400 shrink-0" />
+          <h2 className="text-xs sm:text-sm font-bold whitespace-nowrap">השוואה: תוכנית א' מול תוכנית ב'</h2>
+          <span className="text-xs text-slate-400 hidden md:inline">מעטפת קשיחה (317×705 | עמודים 89 | H=246)</span>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 shrink-0">
           <div className="bg-slate-800 p-0.5 rounded-lg border border-slate-700 flex text-xs">
             <button
               onClick={() => setCompareMode('3d')}
-              className={`px-3 py-1 rounded-md font-medium transition-colors ${
+              className={`px-2.5 sm:px-3 py-1 rounded-md font-medium transition-colors text-xs whitespace-nowrap ${
                 compareMode === '3d' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white'
               }`}
             >
-              השוואת 3D
+              3D
             </button>
             <button
               onClick={() => setCompareMode('2d')}
-              className={`px-3 py-1 rounded-md font-medium transition-colors ${
+              className={`px-2.5 sm:px-3 py-1 rounded-md font-medium transition-colors text-xs whitespace-nowrap ${
                 compareMode === '2d' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white'
               }`}
             >
-              השוואת 2D CAD
+              2D CAD
             </button>
           </div>
         </div>

@@ -934,9 +934,10 @@ export const ThreeKitchenCanvas: React.FC<ThreeKitchenCanvasProps> = ({
         className="w-full h-full block cursor-grab active:cursor-grabbing touch-none"
       />
       {!isMiniView && (
-        <div className="absolute bottom-3 left-3 bg-black/65 backdrop-blur-md text-white text-xs px-3 py-1.5 rounded-lg flex items-center gap-3 border border-white/10 pointer-events-none">
-          <span>🖱️ גרור לסיבוב | גלגל לזום | לחיצה כפולה לפתיחת דלת</span>
-          <span className="text-amber-400 font-medium">H=246 ס"מ | 317×705</span>
+        <div className="absolute bottom-3 left-3 bg-black/75 backdrop-blur-md text-white text-[11px] sm:text-xs px-2.5 py-1.5 rounded-lg flex items-center gap-2 border border-white/10 pointer-events-none max-w-[calc(100%-24px)]">
+          <span className="hidden sm:inline">🖱️ גרור לסיבוב | גלגל לזום | לחיצה כפולה לפתיחה</span>
+          <span className="sm:hidden">סיבוב במגע | H=246 ס"מ</span>
+          <span className="text-amber-400 font-medium hidden sm:inline">| H=246 ס"מ (317×705)</span>
         </div>
       )}
     </div>

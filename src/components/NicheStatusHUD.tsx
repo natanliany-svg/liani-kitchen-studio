@@ -11,16 +11,19 @@ export const NicheStatusHUD: React.FC = () => {
   const warnings = validationIssues.filter(i => i.type === 'warning');
 
   return (
-    <div className="w-full bg-slate-900 border-b border-slate-800 text-white select-none">
+    <div className="w-full bg-slate-900/95 backdrop-blur-md border-b border-slate-800 text-white select-none shrink-0 z-20">
       {/* Niche Capacity Cards */}
-      <div className="max-w-7xl mx-auto px-3 py-2 flex items-center justify-between gap-2 overflow-x-auto text-xs scrollbar-none">
-        <div className="flex items-center gap-1.5 shrink-0 bg-slate-800/80 px-2.5 py-1.5 rounded-md border border-slate-700">
-          <span className="text-amber-400 font-bold">תוכנית {activePlan === 'plan-A' ? 'א\' (קירור בכניסה)' : activePlan === 'plan-B' ? 'ב\' (פינת אוכל מקסימלית)' : 'מותאמת אישית'}:</span>
-          <span className="text-slate-300">H=246 ס"מ מלא לתקרה</span>
+      <div className="w-full px-3 py-1.5 flex items-center gap-2 overflow-x-auto text-xs scrollbar-none">
+        <div className="flex items-center gap-1.5 shrink-0 bg-slate-800/90 px-2.5 py-1 rounded-md border border-slate-700 text-[11px]">
+          <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+          <span className="text-amber-400 font-bold">
+            {activePlan === 'plan-A' ? 'תוכנית א\' (קירור בכניסה)' : activePlan === 'plan-B' ? 'תוכנית ב\' (פינת אוכל מקסימלית)' : 'מותאמת אישית'}
+          </span>
+          <span className="text-slate-400 hidden sm:inline">| תקרה 246 ס"מ</span>
         </div>
 
         {/* 5 Architectural Zones */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 shrink-0">
           {nicheUsage.map(niche => {
             const isDanger = niche.isOverLimit;
             const isTight = niche.remainingCm < 5 && !isDanger;
@@ -28,20 +31,24 @@ export const NicheStatusHUD: React.FC = () => {
             return (
               <div
                 key={niche.id}
-                className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md border text-xs shrink-0 ${
+                className={`flex items-center gap-1.5 px-2 py-0.5 rounded border text-[11px] shrink-0 transition-colors ${
                   isDanger
-                    ? 'bg-red-950/60 border-red-500/50 text-red-300'
+                    ? 'bg-rose-950/80 border-rose-500 text-rose-200'
                     : isTight
-                    ? 'bg-amber-950/40 border-amber-500/40 text-amber-300'
-                    : 'bg-slate-800/70 border-slate-700/80 text-slate-200'
+                    ? 'bg-amber-950/60 border-amber-500/60 text-amber-200'
+                    : 'bg-slate-800/80 border-slate-700 text-slate-200'
                 }`}
               >
-                <span className="font-semibold text-slate-400">{niche.nameHe}:</span>
-                <span className="font-mono font-bold text-white">{niche.usedCm}/{niche.capacityCm} ס"מ</span>
-                <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded ${
-                  isDanger ? 'bg-red-800 text-white' : 'bg-slate-700 text-slate-300'
+                <span className="font-medium text-slate-400">{niche.nameHe}:</span>
+                <span className="font-mono font-bold text-white">{niche.usedCm}/{niche.capacityCm}</span>
+                <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${
+                  isDanger 
+                    ? 'bg-rose-700 text-white' 
+                    : niche.remainingCm === 0 
+                    ? 'bg-emerald-900/90 text-emerald-200 border border-emerald-700' 
+                    : 'bg-slate-700 text-slate-300'
                 }`}>
-                  {isDanger ? `חריגה ${Math.abs(niche.remainingCm)} ס"מ!` : `פנוי ${niche.remainingCm} ס"מ`}
+                  {isDanger ? `חריגה ${Math.abs(niche.remainingCm)}!` : niche.remainingCm === 0 ? 'מלא 100%' : `פנוי ${niche.remainingCm}`}
                 </span>
               </div>
             );
@@ -49,21 +56,21 @@ export const NicheStatusHUD: React.FC = () => {
         </div>
 
         {/* Validation Status Indicator */}
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex items-center gap-1.5 shrink-0 mr-auto">
           {errors.length > 0 ? (
-            <div className="flex items-center gap-1.5 bg-red-900/80 text-red-200 px-3 py-1 rounded-md font-medium text-xs border border-red-700">
-              <ShieldAlert className="w-3.5 h-3.5 text-red-400" />
-              <span>{errors.length} חריגות מבנה</span>
+            <div className="flex items-center gap-1 bg-rose-900/90 text-rose-100 px-2.5 py-0.5 rounded font-bold text-[11px] border border-rose-600">
+              <ShieldAlert className="w-3.5 h-3.5 text-rose-300" />
+              <span>{errors.length} חריגות</span>
             </div>
           ) : warnings.length > 0 ? (
-            <div className="flex items-center gap-1.5 bg-amber-900/70 text-amber-200 px-3 py-1 rounded-md font-medium text-xs border border-amber-700">
+            <div className="flex items-center gap-1 bg-amber-900/80 text-amber-200 px-2.5 py-0.5 rounded font-medium text-[11px] border border-amber-700">
               <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />
               <span>{warnings.length} התראות</span>
             </div>
           ) : (
-            <div className="flex items-center gap-1.5 bg-emerald-950/80 text-emerald-300 px-3 py-1 rounded-md font-medium text-xs border border-emerald-700">
+            <div className="flex items-center gap-1 bg-emerald-950/90 text-emerald-300 px-2.5 py-0.5 rounded font-medium text-[11px] border border-emerald-700">
               <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-              <span>הנדסה וכשרות: 100% תקין</span>
+              <span>100% תקין</span>
             </div>
           )}
         </div>

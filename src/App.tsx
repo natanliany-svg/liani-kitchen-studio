@@ -19,7 +19,7 @@ export const App: React.FC = () => {
   const activeDialog = useKitchenStore(state => state.activeDialog);
 
   return (
-    <div dir="rtl" className="flex flex-col w-screen h-screen overflow-hidden bg-slate-950 font-sans">
+    <div dir="rtl" className="flex flex-col w-full h-[100dvh] max-h-[100dvh] overflow-hidden bg-slate-950 font-sans">
       {/* Top Header Navigation */}
       <Header />
 
@@ -49,8 +49,12 @@ export const App: React.FC = () => {
           )}
         </div>
 
-        {/* Catalog Drawer (Slides in on request) */}
-        {activeDialog === 'catalog' && <CatalogDrawer />}
+        {/* Catalog Drawer (Slides in on request, modal on mobile, sidebar on desktop) */}
+        {activeDialog === 'catalog' && (
+          <div className="absolute lg:relative inset-y-0 right-0 z-30 w-full sm:w-96 h-full">
+            <CatalogDrawer />
+          </div>
+        )}
 
         {/* Parametric Inspector (Always accessible on desktop when module selected, or on mobile via toggle) */}
         {selectedModuleId && (

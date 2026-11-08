@@ -10,6 +10,23 @@ interface CadBlueprintCanvasProps {
   isMiniView?: boolean;
 }
 
+const getModuleCleanName = (mod: PlacedModule): string => {
+  if (mod.applianceType === 'cooktop') return 'כיריים 80';
+  if (mod.applianceType === 'sink') return mod.kosherZone === 'meat' ? 'כיור בשרי' : 'כיור חלבי';
+  if (mod.applianceType === 'fridge') return 'מקרר 90';
+  if (mod.applianceType === 'freezer') return 'מקפיא';
+  if (mod.sku.includes('OVEN') || mod.sku.includes('TOWER')) return 'מגדל תנורים';
+  if (mod.sku.includes('SPICE')) return 'תבלינים';
+  if (mod.sku.includes('PANTRY')) return 'מזווה 80';
+  if (mod.sku.includes('DRAW')) return 'מגירות';
+  if (mod.sku.includes('PESACH')) return 'ארון פסח';
+  if (mod.sku.includes('DISHWASHER')) return 'מדיח';
+  if (mod.sku.includes('CORNER') || mod.sku.includes('RETURN')) return 'שיש ר\'';
+  if (mod.sku.includes('TABLE')) return 'שולחן שבת';
+  if (mod.sku.includes('APPL')) return 'מכשירים';
+  return mod.nameHe.split(' ')[0] || '';
+};
+
 export const CadBlueprintCanvas: React.FC<CadBlueprintCanvasProps> = ({
   overridePlanModules,
   isMiniView = false
@@ -28,7 +45,7 @@ export const CadBlueprintCanvas: React.FC<CadBlueprintCanvasProps> = ({
   const svgRef = useRef<SVGSVGElement>(null);
 
   // Pan & Zoom state
-  const [viewBox, setViewBox] = useState({ x: -80, y: -60, width: 480, height: 840 });
+  const [viewBox, setViewBox] = useState({ x: -95, y: -50, width: 495, height: 830 });
   const [isPanning, setIsPanning] = useState(false);
   const [panStart, setPanStart] = useState({ x: 0, y: 0 });
 
@@ -53,7 +70,7 @@ export const CadBlueprintCanvas: React.FC<CadBlueprintCanvasProps> = ({
   };
 
   const handleResetZoom = () => {
-    setViewBox({ x: -80, y: -60, width: 480, height: 840 });
+    setViewBox({ x: -95, y: -50, width: 495, height: 830 });
   };
 
   // Pointer down (mouse or touch)
@@ -243,18 +260,18 @@ export const CadBlueprintCanvas: React.FC<CadBlueprintCanvasProps> = ({
   // Color mapper
   const getKosherColor = (zone: PlacedModule['kosherZone'], isAppliance?: boolean) => {
     if (!showKosherColors) {
-      return isAppliance ? '#4a5568' : '#e2e8f0';
+      return isAppliance ? '#334155' : '#475569';
     }
     switch (zone) {
       case 'meat':
-        return '#f87171'; // Red / Coral
+        return '#b91c1c'; // Deep architectural crimson
       case 'dairy':
-        return '#60a5fa'; // Blue
+        return '#1d4ed8'; // Crisp architectural cobalt
       case 'pareve':
-        return '#4ade80'; // Green
+        return '#047857'; // Elegant architectural emerald
       case 'neutral':
       default:
-        return '#cbd5e1'; // Neutral Slate
+        return isAppliance ? '#334155' : '#475569';
     }
   };
 
@@ -328,6 +345,7 @@ export const CadBlueprintCanvas: React.FC<CadBlueprintCanvasProps> = ({
       <svg
         ref={svgRef}
         viewBox={`${viewBox.x} ${viewBox.y} ${viewBox.width} ${viewBox.height}`}
+        preserveAspectRatio="xMidYMid meet"
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
@@ -587,17 +605,29 @@ export const CadBlueprintCanvas: React.FC<CadBlueprintCanvasProps> = ({
               onPointerDown={(e) => handleModulePointerDown(e, mod)}
               className="cursor-move group"
             >
+              <defs>
+                <clipPath id={`clip-${mod.id}`}>
+                  <rect
+                    x={mod.position[0] + 0.5}
+                    y={mod.position[2] + 0.5}
+                    width={Math.max(1, rectW - 1)}
+                    height={Math.max(1, rectH - 1)}
+                    rx="1.5"
+                  />
+                </clipPath>
+              </defs>
+
               {/* Cabinet Box */}
               <rect
                 x={mod.position[0]}
                 y={mod.position[2]}
                 width={rectW}
                 height={rectH}
-                fill={isSelected ? '#38bdf8' : isCabinetCollision ? '#fca5a5' : fillColor}
-                stroke={isSelected ? '#ffffff' : isCabinetCollision ? '#ef4444' : '#1e293b'}
-                strokeWidth={isSelected || isCabinetCollision ? '2.5' : '1'}
+                fill={isSelected ? '#0284c7' : isCabinetCollision ? '#ef4444' : fillColor}
+                stroke={isSelected ? '#ffffff' : isCabinetCollision ? '#dc2626' : '#334155'}
+                strokeWidth={isSelected || isCabinetCollision ? '2' : '1'}
                 strokeDasharray={isCabinetCollision ? '4 2' : undefined}
-                rx="1"
+                rx="2"
                 className="transition-colors"
               />
 
@@ -771,49 +801,77 @@ export const CadBlueprintCanvas: React.FC<CadBlueprintCanvasProps> = ({
                 </g>
               )}
 
-              {/* Cutout symbols for Sinks and Cooktops */}
-              {mod.applianceType === 'sink' && (
-                <rect
-                  x={mod.position[0] + rectW * 0.15}
-                  y={mod.position[2] + rectH * 0.15}
-                  width={rectW * 0.7}
-                  height={rectH * 0.7}
-                  fill="#0284c7"
-                  rx="2"
-                  opacity="0.8"
-                />
-              )}
+              {/* Clipped Module Graphics and Labels (NEVER overflows box!) */}
+              <g clipPath={`url(#clip-${mod.id})`} pointerEvents="none">
+                {/* Sinks: architectural dual basin */}
+                {mod.applianceType === 'sink' && (
+                  <rect
+                    x={mod.position[0] + rectW * 0.12}
+                    y={mod.position[2] + rectH * 0.12}
+                    width={rectW * 0.76}
+                    height={rectH * 0.76}
+                    fill="#0284c7"
+                    rx="2"
+                    opacity="0.35"
+                    stroke="#38bdf8"
+                    strokeWidth="0.8"
+                  />
+                )}
 
-              {mod.applianceType === 'cooktop' && (
-                <g>
-                  <circle cx={mod.position[0] + rectW * 0.3} cy={mod.position[2] + rectH * 0.5} r={rectW * 0.15} fill="#dc2626" opacity="0.85" />
-                  <circle cx={mod.position[0] + rectW * 0.7} cy={mod.position[2] + rectH * 0.5} r={rectW * 0.15} fill="#dc2626" opacity="0.85" />
-                </g>
-              )}
+                {/* Cooktops: architectural burner rings */}
+                {mod.applianceType === 'cooktop' && (
+                  <g opacity="0.6">
+                    <circle cx={mod.position[0] + rectW * 0.3} cy={mod.position[2] + rectH * 0.5} r={Math.min(rectW, rectH) * 0.22} fill="#ef4444" stroke="#ffffff" strokeWidth="0.5" />
+                    <circle cx={mod.position[0] + rectW * 0.7} cy={mod.position[2] + rectH * 0.5} r={Math.min(rectW, rectH) * 0.22} fill="#ef4444" stroke="#ffffff" strokeWidth="0.5" />
+                  </g>
+                )}
 
-              {/* Module Text Label */}
-              <text
-                x={mod.position[0] + rectW / 2}
-                y={mod.position[2] + rectH / 2 + 3}
-                fill="#0f172a"
-                fontSize={rectW < 50 || rectH < 50 ? '7' : '8'}
-                fontWeight="bold"
-                textAnchor="middle"
-                pointerEvents="none"
-              >
-                {width}cm
-              </text>
-
-              <text
-                x={mod.position[0] + rectW / 2}
-                y={mod.position[2] + rectH / 2 - 6}
-                fill="#1e293b"
-                fontSize="6.5"
-                textAnchor="middle"
-                pointerEvents="none"
-              >
-                {mod.sku}
-              </text>
+                {/* Clean, Non-Overflowing Hebrew Typography */}
+                {rectW >= 36 && rectH >= 34 ? (
+                  <>
+                    <text
+                      x={mod.position[0] + rectW / 2}
+                      y={mod.position[2] + rectH / 2 - 2.5}
+                      fill="#ffffff"
+                      stroke="#0f172a"
+                      strokeWidth="1.2"
+                      paintOrder="stroke fill"
+                      fontSize={rectW < 52 || rectH < 45 ? '7' : '8.5'}
+                      fontWeight="bold"
+                      textAnchor="middle"
+                    >
+                      {getModuleCleanName(mod)}
+                    </text>
+                    <text
+                      x={mod.position[0] + rectW / 2}
+                      y={mod.position[2] + rectH / 2 + 7}
+                      fill="#e2e8f0"
+                      stroke="#0f172a"
+                      strokeWidth="1"
+                      paintOrder="stroke fill"
+                      fontSize={rectW < 52 || rectH < 45 ? '6' : '7.5'}
+                      fontWeight="600"
+                      textAnchor="middle"
+                    >
+                      {width} ס"מ
+                    </text>
+                  </>
+                ) : (
+                  <text
+                    x={mod.position[0] + rectW / 2}
+                    y={mod.position[2] + rectH / 2 + 2.5}
+                    fill="#ffffff"
+                    stroke="#0f172a"
+                    strokeWidth="1"
+                    paintOrder="stroke fill"
+                    fontSize="7"
+                    fontWeight="bold"
+                    textAnchor="middle"
+                  >
+                    {width}
+                  </text>
+                )}
+              </g>
             </g>
           );
         })}
@@ -821,23 +879,23 @@ export const CadBlueprintCanvas: React.FC<CadBlueprintCanvasProps> = ({
 
       {/* Legend & Help Footer */}
       {!isMiniView && (
-        <div className="bg-slate-800 border-t border-slate-700 px-4 py-2 flex flex-wrap items-center justify-between text-xs text-slate-300">
-          <div className="flex items-center gap-4">
-            <span className="flex items-center gap-1.5 font-medium">
-              <span className="w-3 h-3 rounded bg-red-400 inline-block" /> בשרי (נישה 2)
+        <div className="bg-slate-900/95 backdrop-blur-md border-t border-slate-800 px-3 py-1.5 flex flex-wrap items-center justify-between gap-2 text-[11px] text-slate-300 shrink-0">
+          <div className="flex items-center gap-3">
+            <span className="flex items-center gap-1 font-semibold text-rose-300">
+              <span className="w-2.5 h-2.5 rounded-sm bg-rose-600 inline-block border border-rose-400" /> בשרי (נישה 2)
             </span>
-            <span className="flex items-center gap-1.5 font-medium">
-              <span className="w-3 h-3 rounded bg-blue-400 inline-block" /> חלבי (קיר אחורי)
+            <span className="flex items-center gap-1 font-semibold text-blue-300">
+              <span className="w-2.5 h-2.5 rounded-sm bg-blue-600 inline-block border border-blue-400" /> חלבי (קיר אחורי)
             </span>
-            <span className="flex items-center gap-1.5 font-medium">
-              <span className="w-3 h-3 rounded bg-green-400 inline-block" /> פרווה / שבת
+            <span className="flex items-center gap-1 font-semibold text-emerald-300">
+              <span className="w-2.5 h-2.5 rounded-sm bg-emerald-600 inline-block border border-emerald-400" /> פרווה / מזווה
             </span>
-            <span className="flex items-center gap-1.5 font-medium">
-              <span className="w-3 h-3 rounded bg-slate-400 inline-block" /> קירור ואוכל
+            <span className="flex items-center gap-1 font-semibold text-slate-300">
+              <span className="w-2.5 h-2.5 rounded-sm bg-slate-600 inline-block border border-slate-400" /> קירור ואוכל
             </span>
           </div>
-          <div className="text-slate-400 text-xs">
-            💡 גרור ארון לשינוי מיקום לאורך הקיר | קליק ימני/גרור רקע להזזת המסך
+          <div className="hidden sm:block text-slate-400 text-[10px]">
+            💡 גרור ארון להזזה מגנטית לאורך הקיר | צביטה בשתי אצבעות לזום
           </div>
         </div>
       )}
