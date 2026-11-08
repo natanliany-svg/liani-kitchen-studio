@@ -42,6 +42,26 @@ export const CadBlueprintCanvas: React.FC<CadBlueprintCanvasProps> = ({
 
   const validationIssues = useMemo(() => validateKitchen(modules), [modules]);
 
+  // Architectural layers: overhead wall units rendered first, floor/tall/base units on top
+  const sortedModules = useMemo(() => {
+    return [...modules].sort((a, b) => {
+      const aScore = a.category === 'wall' ? 0 : 1;
+      const bScore = b.category === 'wall' ? 0 : 1;
+      return aScore - bScore;
+    });
+  }, [modules]);
+
+  const isCoveredByFloorUnit = useCallback((mod: PlacedModule) => {
+    if (mod.category !== 'wall') return false;
+    return modules.some(other => 
+      other.id !== mod.id &&
+      other.category !== 'wall' &&
+      other.wallId === mod.wallId &&
+      Math.abs(other.position[0] - mod.position[0]) < 15 &&
+      Math.abs(other.position[2] - mod.position[2]) < 15
+    );
+  }, [modules]);
+
   const svgRef = useRef<SVGSVGElement>(null);
 
   // Pan & Zoom state
@@ -575,9 +595,10 @@ export const CadBlueprintCanvas: React.FC<CadBlueprintCanvasProps> = ({
         )}
 
         {/* ================= PLACED MODULES 2D RENDERING ================= */}
-        {modules.map(mod => {
+        {sortedModules.map(mod => {
           const isSelected = mod.id === selectedModuleId;
           const { width, depth, height } = mod.dimensions;
+          const isCovered = isCoveredByFloorUnit(mod);
 
           const isCabinetCollision = validationIssues.some(
             iss => iss.code === 'COLLISION' && iss.relatedModuleIds?.includes(mod.id)
@@ -624,9 +645,10 @@ export const CadBlueprintCanvas: React.FC<CadBlueprintCanvasProps> = ({
                 width={rectW}
                 height={rectH}
                 fill={isSelected ? '#0284c7' : isCabinetCollision ? '#ef4444' : fillColor}
-                stroke={isSelected ? '#ffffff' : isCabinetCollision ? '#dc2626' : '#334155'}
+                fillOpacity={isCovered ? 0.2 : mod.category === 'wall' ? 0.65 : 1}
+                stroke={isSelected ? '#ffffff' : isCabinetCollision ? '#dc2626' : mod.category === 'wall' ? '#94a3b8' : '#334155'}
                 strokeWidth={isSelected || isCabinetCollision ? '2' : '1'}
-                strokeDasharray={isCabinetCollision ? '4 2' : undefined}
+                strokeDasharray={isCabinetCollision ? '4 2' : mod.category === 'wall' ? '3 2' : undefined}
                 rx="2"
                 className="transition-colors"
               />
@@ -826,8 +848,8 @@ export const CadBlueprintCanvas: React.FC<CadBlueprintCanvasProps> = ({
                   </g>
                 )}
 
-                {/* Clean, Non-Overflowing Hebrew Typography */}
-                {rectW >= 36 && rectH >= 34 ? (
+                {/* Clean, Non-Overflowing Hebrew Typography (Suppressed if covered by primary floor unit) */}
+                {!isCovered && (rectW >= 36 && rectH >= 34 ? (
                   <>
                     <text
                       x={mod.position[0] + rectW / 2}
@@ -856,7 +878,7 @@ export const CadBlueprintCanvas: React.FC<CadBlueprintCanvasProps> = ({
                       {width} ס"מ
                     </text>
                   </>
-                ) : (
+                ) : !isCovered ? (
                   <text
                     x={mod.position[0] + rectW / 2}
                     y={mod.position[2] + rectH / 2 + 2.5}
@@ -870,7 +892,7 @@ export const CadBlueprintCanvas: React.FC<CadBlueprintCanvasProps> = ({
                   >
                     {width}
                   </text>
-                )}
+                ) : null)}
               </g>
             </g>
           );

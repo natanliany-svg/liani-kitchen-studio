@@ -259,11 +259,14 @@ export const ThreeKitchenCanvas: React.FC<ThreeKitchenCanvasProps> = ({
       group.add(edgeLine);
     });
 
-    // 7. Ceiling Outline / Beam
-    const ceilingBeams = new THREE.BoxGeometry(ROOM_SPEC.widthCm, 8, ROOM_SPEC.depthCm);
-    const ceilingMesh = new THREE.Mesh(ceilingBeams, wallMat);
-    ceilingMesh.position.set(ROOM_SPEC.widthCm / 2, ROOM_SPEC.heightCm + 4, ROOM_SPEC.depthCm / 2);
-    group.add(ceilingMesh);
+    // 7. Ceiling Perimeter Edge (Open ceiling for aerial 3D visibility)
+    const ceilingEdgeGeo = new THREE.EdgesGeometry(new THREE.BoxGeometry(ROOM_SPEC.widthCm, 2, ROOM_SPEC.depthCm));
+    const ceilingEdgeMesh = new THREE.LineSegments(
+      ceilingEdgeGeo, 
+      new THREE.LineBasicMaterial({ color: 0x94a3b8, transparent: true, opacity: 0.6 })
+    );
+    ceilingEdgeMesh.position.set(ROOM_SPEC.widthCm / 2, ROOM_SPEC.heightCm, ROOM_SPEC.depthCm / 2);
+    group.add(ceilingEdgeMesh);
   }, [theme, getThemeColors]);
 
   // Build Modules Mesh Representation with verified world coordinates matching CAD and physics
@@ -760,8 +763,8 @@ export const ThreeKitchenCanvas: React.FC<ThreeKitchenCanvasProps> = ({
         break;
       case 'orbit':
       default:
-        camera.position.set(380, 420, -120);
-        controls.target.set(160, 110, 380);
+        camera.position.set(220, 260, -90);
+        controls.target.set(160, 110, 360);
         break;
     }
 
@@ -818,7 +821,7 @@ export const ThreeKitchenCanvas: React.FC<ThreeKitchenCanvasProps> = ({
 
     // Camera
     const camera = new THREE.PerspectiveCamera(48, width / height, 5, 3000);
-    camera.position.set(380, 420, -120);
+    camera.position.set(220, 260, -90);
     cameraRef.current = camera;
 
     // Renderer
@@ -840,7 +843,7 @@ export const ThreeKitchenCanvas: React.FC<ThreeKitchenCanvasProps> = ({
     const controls = new OrbitControls(camera, canvas);
     controls.enableDamping = true;
     controls.dampingFactor = 0.05;
-    controls.target.set(160, 110, 380);
+    controls.target.set(160, 110, 360);
     controls.minDistance = 30;
     controls.maxDistance = 1800;
     controls.maxPolarAngle = Math.PI / 2 + 0.02; // Don't flip under floor
