@@ -1,0 +1,287 @@
+import { CatalogItem } from '../types/kitchen';
+
+export const KITCHEN_CATALOG: CatalogItem[] = [
+  // ==================== APPLIANCES & COOLING ====================
+  {
+    sku: 'REF-FRD-90',
+    nameHe: 'מקרר רחב 90 ס"מ (פתיחה צרפתית)',
+    category: 'appliance',
+    kosherZone: 'neutral',
+    descriptionHe: 'מקרר איכותי 90 ס"מ, עומק 75 ס"מ הנבלע בנישת 89 ס"מ',
+    defaultDimensions: { width: 90, height: 190, depth: 75 },
+    minWidth: 80,
+    maxWidth: 100,
+    doorType: 'double-door',
+    isAppliance: true,
+    applianceType: 'fridge',
+    suggestedWall: 'right-niche1',
+    priceIls: 7800,
+    iconName: 'Refrigerator'
+  },
+  {
+    sku: 'REF-FRZ-60',
+    nameHe: 'מקפיא עומד 60 ס"מ',
+    category: 'appliance',
+    kosherZone: 'neutral',
+    descriptionHe: 'מקפיא No-Frost 60 ס"מ עם מגירות שקופות',
+    defaultDimensions: { width: 60, height: 190, depth: 75 },
+    minWidth: 55,
+    maxWidth: 70,
+    doorType: 'single-door',
+    isAppliance: true,
+    applianceType: 'freezer',
+    suggestedWall: 'right-niche1',
+    priceIls: 4200,
+    iconName: 'Snowflake'
+  },
+  {
+    sku: 'REF-FRZ-65',
+    nameHe: 'מקפיא עומד 65 ס"מ לנישה 3',
+    category: 'appliance',
+    kosherZone: 'neutral',
+    descriptionHe: 'מקפיא רחב 65 ס"מ המתאים בדיוק לנישת הפינה בתוכנית ב\'',
+    defaultDimensions: { width: 65, height: 185, depth: 65 },
+    minWidth: 60,
+    maxWidth: 75,
+    doorType: 'single-door',
+    isAppliance: true,
+    applianceType: 'freezer',
+    suggestedWall: 'right-niche3',
+    priceIls: 4400,
+    iconName: 'Snowflake'
+  },
+
+  // ==================== TALL UNITS & OVENS ====================
+  {
+    sku: 'TALL-OVEN-160',
+    nameHe: 'מגדל אפייה כפול 160 ס"מ (2 תנורים בגובה מותניים)',
+    category: 'tall',
+    kosherZone: 'pareve',
+    descriptionHe: 'יחידת פאר ברוחב 160 ס"מ: 2 תנורי בילד-אין זה לצד זה + מיקרוגל + מגירות תבניות + פסח עד 246 ס"מ',
+    defaultDimensions: { width: 160, height: 246, depth: 60 },
+    doorType: 'double-door',
+    isAppliance: true,
+    applianceType: 'oven',
+    suggestedWall: 'left-wall',
+    priceIls: 9500,
+    iconName: 'Flame'
+  },
+  {
+    sku: 'TALL-OVEN-60',
+    nameHe: 'מגדל אפייה צר 60 ס"מ (תנור כפול אנכי)',
+    category: 'tall',
+    kosherZone: 'pareve',
+    descriptionHe: 'מגדל אפייה מובנה 60 ס"מ עם 2 תנורים אנכיים, מיקרוגל בקלפה ואחסון עד 246 ס"מ',
+    defaultDimensions: { width: 60, height: 246, depth: 65 },
+    doorType: 'double-door',
+    isAppliance: true,
+    applianceType: 'oven',
+    suggestedWall: 'right-niche1',
+    priceIls: 6900,
+    iconName: 'Flame'
+  },
+  {
+    sku: 'TALL-PANTRY-80',
+    nameHe: 'ארון מזווה גבוה 80 ס"מ (Space Tower)',
+    category: 'tall',
+    kosherZone: 'pareve',
+    descriptionHe: 'מזווה איכותי עם 5-6 מגירות נשלפות בעומס כבד, גובה 246 ס"מ עד התקרה',
+    defaultDimensions: { width: 80, height: 246, depth: 60 },
+    minWidth: 60,
+    maxWidth: 100,
+    doorType: 'drawers',
+    suggestedWall: 'left-wall',
+    priceIls: 5400,
+    iconName: 'Package'
+  },
+  {
+    sku: 'TALL-GARAGE-60',
+    nameHe: 'ארון מכשירים על השיש (דלתות כיס Pocket Doors)',
+    category: 'appliance',
+    kosherZone: 'pareve',
+    descriptionHe: 'יושב על השיש בפינה השמאלית: דלתות נבלעות בדפנות למיקסר Kenwood וצ\'יפסר + ארון פסח עד 246 ס"מ',
+    defaultDimensions: { width: 60, height: 156, depth: 60 },
+    doorType: 'pocket',
+    isAppliance: true,
+    applianceType: 'appliance-garage',
+    suggestedWall: 'back-wall',
+    priceIls: 4800,
+    iconName: 'PlugZap'
+  },
+  {
+    sku: 'TALL-UTIL-59',
+    nameHe: 'ארון שירות/מכשירים גבוה 59 ס"מ',
+    category: 'tall',
+    kosherZone: 'pareve',
+    descriptionHe: 'ארון משלים לנישה 3 בתוכנית ב\' (משלים עם המקפיא ל-124 ס"מ מלאים)',
+    defaultDimensions: { width: 59, height: 246, depth: 65 },
+    doorType: 'double-door',
+    suggestedWall: 'right-niche3',
+    priceIls: 4100,
+    iconName: 'Layers'
+  },
+
+  // ==================== BASE CABINETS (MEAT) ====================
+  {
+    sku: 'BASE-SINK-85-M',
+    nameHe: 'ארון כיור בשרי 85 ס"מ',
+    category: 'base',
+    kosherZone: 'meat',
+    descriptionHe: 'ארון כיור בשרי בהתקנה שטוחה עם פח אשפה כפול והגנה מלחות',
+    defaultDimensions: { width: 85, height: 90, depth: 65 },
+    doorType: 'double-door',
+    isAppliance: true,
+    applianceType: 'sink',
+    suggestedWall: 'right-niche2',
+    priceIls: 3100,
+    iconName: 'Droplet'
+  },
+  {
+    sku: 'BASE-HOB-80-M',
+    nameHe: 'ארון כיריים בשריות 80 ס"מ + מגירות סירים',
+    category: 'base',
+    kosherZone: 'meat',
+    descriptionHe: 'יחידת כיריים אינדוקציה/גז עם 2 מגירות סירים רחבות Legrabox',
+    defaultDimensions: { width: 80, height: 90, depth: 65 },
+    doorType: 'drawers',
+    isAppliance: true,
+    applianceType: 'cooktop',
+    suggestedWall: 'right-niche2',
+    priceIls: 4500,
+    iconName: 'CookingPot'
+  },
+  {
+    sku: 'BASE-DRW-60-M',
+    nameHe: 'יחידת מגירות בשרית 60 ס"מ',
+    category: 'base',
+    kosherZone: 'meat',
+    descriptionHe: '3 מגירות סכו"ם, כלים ומגבות בשריות עם חלוקה פנימית',
+    defaultDimensions: { width: 60, height: 90, depth: 65 },
+    doorType: 'drawers',
+    suggestedWall: 'right-niche2',
+    priceIls: 2400,
+    iconName: 'Archive'
+  },
+  {
+    sku: 'BASE-PULL-43-M',
+    nameHe: 'יחידת בקבוקים ותבלינים נשלפת 43 ס"מ',
+    category: 'base',
+    kosherZone: 'meat',
+    descriptionHe: 'מתקן תבלינים נשלף לשמירה על סדר ומשטח עבודה ביניים',
+    defaultDimensions: { width: 43, height: 90, depth: 65 },
+    doorType: 'pullout',
+    suggestedWall: 'right-niche2',
+    priceIls: 1800,
+    iconName: 'Columns3'
+  },
+
+  // ==================== BASE CABINETS (DAIRY) ====================
+  {
+    sku: 'BASE-SINK-80-D',
+    nameHe: 'ארון כיור חלבי 80 ס"מ',
+    category: 'base',
+    kosherZone: 'dairy',
+    descriptionHe: 'כיור חלבי עמוק עם משטח עבודה רחב בקיר האחורי',
+    defaultDimensions: { width: 80, height: 90, depth: 65 },
+    doorType: 'double-door',
+    isAppliance: true,
+    applianceType: 'sink',
+    suggestedWall: 'back-wall',
+    priceIls: 3200,
+    iconName: 'Droplets'
+  },
+  {
+    sku: 'BASE-DRW-62-D',
+    nameHe: 'יחידת מגירות חלבית 62 ס"מ',
+    category: 'base',
+    kosherZone: 'dairy',
+    descriptionHe: 'מגירות שקטות למוצרי חלב וסכו"ם חלבי',
+    defaultDimensions: { width: 62, height: 90, depth: 65 },
+    doorType: 'drawers',
+    suggestedWall: 'back-wall',
+    priceIls: 2400,
+    iconName: 'Archive'
+  },
+  {
+    sku: 'BASE-DW-50-D',
+    nameHe: 'מדיח כלים חלבי אינטגרלי 50-60 ס"מ',
+    category: 'base',
+    kosherZone: 'dairy',
+    descriptionHe: 'מדיח כלים חלבי אינטגרלי שקט מוסתר בחזית ארון',
+    defaultDimensions: { width: 50, height: 90, depth: 65 },
+    doorType: 'single-door',
+    isAppliance: true,
+    applianceType: 'dishwasher',
+    suggestedWall: 'back-wall',
+    priceIls: 3600,
+    iconName: 'Sparkles'
+  },
+  {
+    sku: 'BASE-SHABBAT-124',
+    nameHe: 'משטח שיש פינתי 124 ס"מ (פלטה ומיחם שבת)',
+    category: 'base',
+    kosherZone: 'pareve',
+    descriptionHe: 'משטח פינתי רציף בנישה 3 המותאם במיוחד לשעון שבת, מיחם ופלטה',
+    defaultDimensions: { width: 124, height: 90, depth: 65 },
+    doorType: 'double-door',
+    suggestedWall: 'right-niche3',
+    priceIls: 3900,
+    iconName: 'Coffee'
+  },
+
+  // ==================== UPPER / PESACH WALL CABINETS (H=246 cm) ====================
+  {
+    sku: 'WALL-PESACH-FULL',
+    nameHe: 'ארון עליון כפול עד התקרה 246 ס"מ',
+    category: 'wall',
+    kosherZone: 'neutral',
+    descriptionHe: 'שתי קומות קלפות הרמטיות: קומה יומיומית + קומה עליונה לפסח',
+    defaultDimensions: { width: 80, height: 93, depth: 38 },
+    doorType: 'lift-up',
+    suggestedWall: 'back-wall',
+    priceIls: 2600,
+    iconName: 'Layers'
+  },
+  {
+    sku: 'WALL-PESACH-STEPPED',
+    nameHe: 'ארון עליון מדורג ("גשר תיאטרלי" 60 ס"מ עומק למעלה)',
+    category: 'wall',
+    kosherZone: 'neutral',
+    descriptionHe: 'קומה תחתונה 38 ס"מ שלא מפריעה לראש + קומה עליונה עמוקה 60 ס"מ המכפילה אחסון סירים',
+    defaultDimensions: { width: 80, height: 93, depth: 60 },
+    doorType: 'lift-up',
+    suggestedWall: 'back-wall',
+    priceIls: 3100,
+    iconName: 'ChevronsUp'
+  },
+
+  // ==================== FURNITURE & DINING ====================
+  {
+    sku: 'FURN-TABLE-160',
+    nameHe: 'שולחן אוכל משפחתי 160×90 ס"מ + 6 כיסאות',
+    category: 'furniture',
+    kosherZone: 'neutral',
+    descriptionHe: 'שולחן אוכל מעץ אלון מלא עם 6 כיסאות מרופדים',
+    defaultDimensions: { width: 90, height: 76, depth: 160 },
+    doorType: 'none',
+    isAppliance: true,
+    applianceType: 'table',
+    suggestedWall: 'free',
+    priceIls: 3800,
+    iconName: 'Utensils'
+  },
+  {
+    sku: 'FURN-TABLE-220',
+    nameHe: 'שולחן שבת ואירוח ענק 220×100 ס"מ + 8-10 כיסאות',
+    category: 'furniture',
+    kosherZone: 'neutral',
+    descriptionHe: 'שולחן אירוח מרווח ל-8-10 סועדים במרחב הפנוי הענק של תוכנית ב\'',
+    defaultDimensions: { width: 100, height: 76, depth: 220 },
+    doorType: 'none',
+    isAppliance: true,
+    applianceType: 'table',
+    suggestedWall: 'free',
+    priceIls: 5200,
+    iconName: 'Users'
+  }
+];
