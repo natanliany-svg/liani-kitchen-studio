@@ -40,6 +40,11 @@ export const MobileControlsModal: React.FC = () => {
   const showKosherColors = useKitchenStore(state => state.showKosherColors);
   const toggleKosherColors = useKitchenStore(state => state.toggleKosherColors);
 
+  // Live Tour Store
+  const isLiveTourActive = useKitchenStore(state => state.isLiveTourActive);
+  const startLiveTour = useKitchenStore(state => state.startLiveTour);
+  const stopLiveTour = useKitchenStore(state => state.stopLiveTour);
+
   if (activeDialog !== 'controls') return null;
 
   const handleScreenshot = () => {
@@ -80,6 +85,22 @@ export const MobileControlsModal: React.FC = () => {
 
         {/* Scrollable controls body */}
         <div className="p-4 overflow-y-auto space-y-5 text-xs">
+          {/* Live Virtual Tour Action Button */}
+          <button
+            onClick={() => {
+              setActiveDialog('none');
+              if (isLiveTourActive) {
+                stopLiveTour();
+              } else {
+                startLiveTour(0);
+              }
+            }}
+            className="w-full py-3 px-4 bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-400 hover:from-amber-400 hover:to-yellow-300 text-slate-950 font-black rounded-xl flex items-center justify-center gap-2.5 shadow-xl shadow-amber-500/25 active:scale-95 transition-all text-sm border border-amber-300/60"
+          >
+            <Compass className={`w-5 h-5 text-slate-950 ${isLiveTourActive ? 'animate-spin' : 'animate-pulse'}`} />
+            <span>{isLiveTourActive ? '⏹️ עצור סיור בלייב' : '🚗 הפעל סיור בלייב במטבח'}</span>
+          </button>
+
           {/* Plan Selector */}
           <div className="space-y-2">
             <span className="font-bold text-slate-300">תוכנית מטבח</span>

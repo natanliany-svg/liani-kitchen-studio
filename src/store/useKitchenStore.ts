@@ -25,6 +25,19 @@ interface KitchenStoreState {
   viewMode: ViewMode;
   cameraPreset: CameraPreset;
 
+  // Live Virtual Tour
+  isLiveTourActive: boolean;
+  activeStationIndex: number;
+  isTourPlaying: boolean;
+  tourSpeed: number; // 0.5, 1, 1.5, 2
+  startLiveTour: (initialStation?: number) => void;
+  stopLiveTour: () => void;
+  setStationIndex: (idx: number) => void;
+  toggleTourPlay: () => void;
+  setTourSpeed: (speed: number) => void;
+  nextStation: () => void;
+  prevStation: () => void;
+
   // Aesthetics & Lighting
   theme: MaterialTheme;
   lightingMode: LightingMode;
@@ -91,6 +104,18 @@ export const useKitchenStore = create<KitchenStoreState>((set, get) => {
 
     viewMode: 'split',
     cameraPreset: 'orbit',
+
+    isLiveTourActive: false,
+    activeStationIndex: 0,
+    isTourPlaying: true,
+    tourSpeed: 1,
+    startLiveTour: (initialStation = 0) => set({ isLiveTourActive: true, activeStationIndex: initialStation, isTourPlaying: true, viewMode: '3d' }),
+    stopLiveTour: () => set({ isLiveTourActive: false, isTourPlaying: false }),
+    setStationIndex: (idx: number) => set({ activeStationIndex: idx }),
+    toggleTourPlay: () => set(state => ({ isTourPlaying: !state.isTourPlaying })),
+    setTourSpeed: (speed: number) => set({ tourSpeed: speed }),
+    nextStation: () => set(state => ({ activeStationIndex: (state.activeStationIndex + 1) % 7 })),
+    prevStation: () => set(state => ({ activeStationIndex: (state.activeStationIndex - 1 + 7) % 7 })),
 
     theme: 'cashmere-oak',
     lightingMode: 'daylight',

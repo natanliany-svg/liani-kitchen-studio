@@ -15,7 +15,8 @@ import {
   ArrowRightLeft,
   Columns2,
   Sparkles,
-  Download
+  Download,
+  Compass
 } from 'lucide-react';
 import { MaterialTheme, LightingMode, CameraPreset, ViewMode } from '../types/kitchen';
 
@@ -42,6 +43,11 @@ export const Header: React.FC = () => {
   const historyFuture = useKitchenStore(state => state.historyFuture);
   const activeDialog = useKitchenStore(state => state.activeDialog);
   const setActiveDialog = useKitchenStore(state => state.setActiveDialog);
+
+  // Live Tour Store integration
+  const isLiveTourActive = useKitchenStore(state => state.isLiveTourActive);
+  const startLiveTour = useKitchenStore(state => state.startLiveTour);
+  const stopLiveTour = useKitchenStore(state => state.stopLiveTour);
 
   // Take screenshot
   const handleScreenshot = () => {
@@ -108,9 +114,30 @@ export const Header: React.FC = () => {
       {/* Main Studio View Tabs */}
       <div className="flex items-center gap-1 bg-slate-900/90 p-0.5 rounded-lg border border-slate-800 text-xs shrink-0">
         <button
-          onClick={() => setViewMode('3d')}
+          onClick={() => {
+            if (isLiveTourActive) {
+              stopLiveTour();
+            } else {
+              startLiveTour(0);
+            }
+          }}
+          className={`px-2.5 sm:px-3 py-1 rounded-md transition-all font-bold flex items-center gap-1.5 whitespace-nowrap ${
+            isLiveTourActive
+              ? 'bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-400 text-slate-950 font-black shadow-lg shadow-amber-500/30 ring-1 ring-amber-300'
+              : 'text-amber-400 hover:text-white hover:bg-slate-800'
+          }`}
+          title="סיור וירטואלי חי במטבח – מצב נהיגה ותנועה חופשית בין התחנות"
+        >
+          <Compass className={`w-3.5 h-3.5 ${isLiveTourActive ? 'animate-spin' : ''}`} />
+          <span>🚗 סיור בלייב</span>
+        </button>
+        <button
+          onClick={() => {
+            if (isLiveTourActive) stopLiveTour();
+            setViewMode('3d');
+          }}
           className={`px-2.5 sm:px-3 py-1 rounded-md transition-all font-semibold flex items-center gap-1.5 whitespace-nowrap ${
-            viewMode === '3d' ? 'bg-amber-500 text-slate-950 shadow-md' : 'text-slate-300 hover:text-white hover:bg-slate-800'
+            viewMode === '3d' && !isLiveTourActive ? 'bg-amber-500 text-slate-950 shadow-md' : 'text-slate-300 hover:text-white hover:bg-slate-800'
           }`}
         >
           <Layers className="w-3.5 h-3.5" />
@@ -194,7 +221,7 @@ export const Header: React.FC = () => {
         <button
           onClick={() => setActiveDialog('media')}
           className="p-1.5 bg-slate-900 border border-slate-700 hover:bg-slate-800 rounded-lg text-slate-300 hover:text-white shrink-0"
-          title="ארכיון מסמכי מקור, צילומי שטח ותחקיר פורנזי"
+          title="תיק מסמכים אדריכלי וצילומי שטח | פרויקט משפחת אור"
         >
           <Image className="w-4 h-4 text-blue-400" />
         </button>

@@ -1,9 +1,12 @@
 import React, { useEffect, useRef, useCallback } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { Compass } from 'lucide-react';
 import { useKitchenStore } from '../store/useKitchenStore';
 import { PlacedModule, MaterialTheme, LightingMode, CameraPreset } from '../types/kitchen';
 import { ROOM_SPEC } from '../data/roomSpec';
+import { TOUR_STATIONS } from '../data/tourStations';
+import { LiveKitchenTourOverlay } from './LiveKitchenTourOverlay';
 
 interface ThreeKitchenCanvasProps {
   onCaptureScreenshot?: (dataUrl: string) => void;
@@ -30,6 +33,24 @@ export const ThreeKitchenCanvas: React.FC<ThreeKitchenCanvasProps> = ({
   const cameraPreset = useKitchenStore(state => state.cameraPreset);
   const showDimensions = useKitchenStore(state => state.showDimensions);
   const showKosherColors = useKitchenStore(state => state.showKosherColors);
+
+  // Live Tour Store state
+  const isLiveTourActive = useKitchenStore(state => state.isLiveTourActive);
+  const activeStationIndex = useKitchenStore(state => state.activeStationIndex);
+  const isTourPlaying = useKitchenStore(state => state.isTourPlaying);
+  const tourSpeed = useKitchenStore(state => state.tourSpeed);
+  const startLiveTour = useKitchenStore(state => state.startLiveTour);
+  const stopLiveTour = useKitchenStore(state => state.stopLiveTour);
+  const nextStation = useKitchenStore(state => state.nextStation);
+
+  // Live Tour refs for animation loop
+  const targetCamPosRef = useRef<THREE.Vector3>(new THREE.Vector3());
+  const targetLookAtRef = useRef<THREE.Vector3>(new THREE.Vector3());
+  const isTransitioningRef = useRef<boolean>(false);
+  const stationDwellStartRef = useRef<number>(0);
+  const isTourActiveRef = useRef<boolean>(false);
+  const isTourPlayingRef = useRef<boolean>(false);
+  const tourSpeedRef = useRef<number>(1);
 
   // Three.js internal references
   const sceneRef = useRef<THREE.Scene | null>(null);
@@ -870,6 +891,30 @@ export const ThreeKitchenCanvas: React.FC<ThreeKitchenCanvasProps> = ({
     // Animation Loop
     const animate = () => {
       animFrameIdRef.current = requestAnimationFrame(animate);
+
+      // Live Tour camera glide & autopilot
+      if (isTourActiveRef.current && camera && controls) {
+        if (isTransitioningRef.current) {
+          const lerpFactor = 0.04 * tourSpeedRef.current;
+          camera.position.lerp(targetCamPosRef.current, lerpFactor);
+          controls.target.lerp(targetLookAtRef.current, lerpFactor);
+          if (
+            camera.position.distanceTo(targetCamPosRef.current) < 2 &&
+            controls.target.distanceTo(targetLookAtRef.current) < 2
+          ) {
+            isTransitioningRef.current = false;
+            stationDwellStartRef.current = performance.now();
+          }
+        } else if (isTourPlayingRef.current) {
+          const elapsed = performance.now() - stationDwellStartRef.current;
+          const dwellDuration = 4800 / tourSpeedRef.current;
+          if (elapsed >= dwellDuration) {
+            stationDwellStartRef.current = performance.now();
+            useKitchenStore.getState().nextStation();
+          }
+        }
+      }
+
       controls.update();
 
       // Dynamic smart wall culling: hide exterior walls when camera is outside them so they NEVER block view or mouse clicks!
@@ -940,6 +985,68 @@ export const ThreeKitchenCanvas: React.FC<ThreeKitchenCanvasProps> = ({
     (window as unknown as { captureStudio3D?: () => string | undefined }).captureStudio3D = captureScreenshot;
   }, [captureScreenshot]);
 
+  // Sync tour state refs
+  useEffect(() => {
+    isTourActiveRef.current = isLiveTourActive;
+    isTourPlayingRef.current = isTourPlaying;
+    tourSpeedRef.current = tourSpeed;
+  }, [isLiveTourActive, isTourPlaying, tourSpeed]);
+
+  // Handle station change in Live Tour
+  useEffect(() => {
+    if (!isLiveTourActive) return;
+    const station = TOUR_STATIONS[activeStationIndex] || TOUR_STATIONS[0];
+    targetCamPosRef.current.set(...station.camPos);
+    targetLookAtRef.current.set(...station.targetPos);
+    isTransitioningRef.current = true;
+    stationDwellStartRef.current = performance.now();
+  }, [isLiveTourActive, activeStationIndex]);
+
+  // Handle Free Walk / Drive step
+  const handleDriveStep = useCallback((dir: 'forward' | 'backward' | 'left' | 'right' | 'turn-left' | 'turn-right') => {
+    const camera = cameraRef.current;
+    const controls = controlsRef.current;
+    if (!camera || !controls) return;
+
+    isTransitioningRef.current = false;
+
+    const forward = new THREE.Vector3();
+    camera.getWorldDirection(forward);
+    forward.y = 0;
+    forward.normalize();
+    const right = new THREE.Vector3();
+    right.crossVectors(camera.up, forward).normalize();
+
+    const step = 22;
+    if (dir === 'forward') {
+      camera.position.addScaledVector(forward, step);
+      controls.target.addScaledVector(forward, step);
+    } else if (dir === 'backward') {
+      camera.position.addScaledVector(forward, -step);
+      controls.target.addScaledVector(forward, -step);
+    } else if (dir === 'left') {
+      camera.position.addScaledVector(right, -step);
+      controls.target.addScaledVector(right, -step);
+    } else if (dir === 'right') {
+      camera.position.addScaledVector(right, step);
+      controls.target.addScaledVector(right, step);
+    } else if (dir === 'turn-left') {
+      const offset = controls.target.clone().sub(camera.position);
+      offset.applyAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI / 10);
+      controls.target.copy(camera.position).add(offset);
+    } else if (dir === 'turn-right') {
+      const offset = controls.target.clone().sub(camera.position);
+      offset.applyAxisAngle(new THREE.Vector3(0, 1, 0), -Math.PI / 10);
+      controls.target.copy(camera.position).add(offset);
+    }
+
+    camera.position.x = Math.max(50, Math.min(camera.position.x, 260));
+    camera.position.z = Math.max(20, Math.min(camera.position.z, 650));
+    camera.position.y = 155; // Keep eye level
+
+    controls.update();
+  }, []);
+
   return (
     <div ref={containerRef} className="relative w-full h-full overflow-hidden select-none bg-slate-100">
       <canvas
@@ -947,7 +1054,24 @@ export const ThreeKitchenCanvas: React.FC<ThreeKitchenCanvasProps> = ({
         onClick={handleCanvasClick}
         className="w-full h-full block cursor-grab active:cursor-grabbing touch-none"
       />
-      {!isMiniView && (
+
+      {/* Floating Tour Launch Button when tour is idle */}
+      {!isLiveTourActive && !isMiniView && (
+        <button
+          onClick={() => startLiveTour(0)}
+          className="absolute top-4 right-4 z-10 flex items-center gap-2 px-3.5 py-2 bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-400 hover:from-amber-400 hover:to-yellow-300 text-slate-950 font-extrabold rounded-xl shadow-xl shadow-amber-500/25 transition-all active:scale-95 text-xs sm:text-sm border border-amber-300/60"
+        >
+          <Compass className="w-4 h-4 text-slate-950 animate-pulse" />
+          <span>🚗 סיור בלייב במטבח</span>
+        </button>
+      )}
+
+      {/* Live Virtual Tour Interactive HUD & Driving Controller */}
+      {isLiveTourActive && (
+        <LiveKitchenTourOverlay onDriveStep={handleDriveStep} />
+      )}
+
+      {!isMiniView && !isLiveTourActive && (
         <div className="absolute bottom-3 left-3 bg-black/75 backdrop-blur-md text-white text-[11px] sm:text-xs px-2.5 py-1.5 rounded-lg flex items-center gap-2 border border-white/10 pointer-events-none max-w-[calc(100%-24px)]">
           <span className="hidden sm:inline">🖱️ גרור לסיבוב | גלגל לזום | לחיצה כפולה לפתיחה</span>
           <span className="sm:hidden">סיבוב במגע | H=246 ס"מ</span>

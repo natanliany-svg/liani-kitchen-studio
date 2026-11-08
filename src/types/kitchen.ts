@@ -96,7 +96,17 @@ export interface RoomSpecification {
 
 export type PlanId = 'plan-A' | 'plan-B' | 'custom';
 
-export type ViewMode = 'split' | '3d' | '2d' | 'compare' | 'media' | 'renders';
+export type ViewMode = 'split' | '3d' | '2d' | 'compare' | 'media' | 'renders' | 'tour';
+
+export interface TourStation {
+  id: string;
+  nameHe: string;
+  stationNumber: number;
+  camPos: [number, number, number];
+  targetPos: [number, number, number];
+  descriptionHe: string;
+  badgeHe: string;
+}
 
 export type CameraPreset = 
   | 'orbit' 

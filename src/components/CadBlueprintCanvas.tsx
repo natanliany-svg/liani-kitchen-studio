@@ -493,7 +493,7 @@ export const CadBlueprintCanvas: React.FC<CadBlueprintCanvasProps> = ({
           transform={`rotate(-90 ${ROOM_SPEC.widthCm - 4} 230)`}
           textAnchor="middle"
         >
-          מרחב שולחן אוכל ושבת פתוח ({'>'}2.80 מ')
+          מרחב מרכזי פתוח ומרווח ({'>'}2.80 מ')
         </text>
 
         {/* Right Wall Concrete Pillars (89 cm protrusion x 25 cm width) */}
@@ -915,7 +915,7 @@ export const CadBlueprintCanvas: React.FC<CadBlueprintCanvasProps> = ({
                         : `${width} ס"מ`}
                     </text>
                   </>
-                ) : !isCovered ? (
+                ) : !isCovered && rectW >= 25 && rectH >= 20 ? (
                   <text
                     x={mod.position[0] + rectW / 2}
                     y={mod.position[2] + rectH / 2 + 2.5}
@@ -923,11 +923,11 @@ export const CadBlueprintCanvas: React.FC<CadBlueprintCanvasProps> = ({
                     stroke="#0f172a"
                     strokeWidth="1"
                     paintOrder="stroke fill"
-                    fontSize="7"
+                    fontSize="6.5"
                     fontWeight="bold"
                     textAnchor="middle"
                   >
-                    {width}
+                    {`${width}`}
                   </text>
                 ) : null)}
               </g>
