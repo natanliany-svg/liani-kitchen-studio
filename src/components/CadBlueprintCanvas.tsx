@@ -673,11 +673,11 @@ export const CadBlueprintCanvas: React.FC<CadBlueprintCanvasProps> = ({
                 y={mod.position[2]}
                 width={rectW}
                 height={rectH}
-                fill={isSelected ? '#0284c7' : isCabinetCollision ? '#ef4444' : (mod.id === 'planA-appliance-garage' || mod.id === 'planB-appliance-garage-cube') ? '#0284c7' : fillColor}
-                fillOpacity={isCovered ? 0.2 : (mod.id === 'planA-appliance-garage' || mod.id === 'planB-appliance-garage-cube') ? 0.85 : mod.category === 'wall' ? 0.65 : 1}
-                stroke={isSelected ? '#ffffff' : isCabinetCollision ? '#dc2626' : (mod.id === 'planA-appliance-garage' || mod.id === 'planB-appliance-garage-cube') ? '#00e5ff' : mod.category === 'wall' ? '#94a3b8' : '#334155'}
-                strokeWidth={isSelected || isCabinetCollision ? '2' : (mod.id === 'planA-appliance-garage' || mod.id === 'planB-appliance-garage-cube') ? '2' : '1'}
-                strokeDasharray={isCabinetCollision ? '4 2' : (mod.id === 'planA-appliance-garage' || mod.id === 'planB-appliance-garage-cube') ? '3 2' : mod.category === 'wall' ? '3 2' : undefined}
+                fill={isSelected ? '#0284c7' : isCabinetCollision ? '#ef4444' : (mod.id === 'planA-appliance-garage' || mod.id === 'planB-appliance-garage-tambour' || mod.doorType === 'tambour') ? '#0284c7' : fillColor}
+                fillOpacity={isCovered ? 0.2 : (mod.id === 'planA-appliance-garage' || mod.id === 'planB-appliance-garage-tambour' || mod.doorType === 'tambour') ? 0.85 : mod.category === 'wall' ? 0.65 : 1}
+                stroke={isSelected ? '#ffffff' : isCabinetCollision ? '#dc2626' : (mod.id === 'planA-appliance-garage' || mod.id === 'planB-appliance-garage-tambour' || mod.doorType === 'tambour') ? '#00e5ff' : mod.category === 'wall' ? '#94a3b8' : '#334155'}
+                strokeWidth={isSelected || isCabinetCollision ? '2' : (mod.id === 'planA-appliance-garage' || mod.id === 'planB-appliance-garage-tambour' || mod.doorType === 'tambour') ? '2' : '1'}
+                strokeDasharray={isCabinetCollision ? '4 2' : (mod.id === 'planA-appliance-garage' || mod.id === 'planB-appliance-garage-tambour' || mod.doorType === 'tambour') ? '3 2' : mod.category === 'wall' ? '3 2' : undefined}
                 rx="2"
                 className="transition-colors"
               />

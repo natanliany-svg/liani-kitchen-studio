@@ -120,7 +120,7 @@ export const useKitchenStore = create<KitchenStoreState>((set, get) => {
     theme: 'cashmere-oak',
     lightingMode: 'daylight',
     showDimensions: true,
-    showKosherColors: true,
+    showKosherColors: false,
     allDoorsOpen: false,
 
     activeDialog: 'none',

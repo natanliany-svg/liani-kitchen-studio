@@ -281,7 +281,7 @@ export const PLAN_A_MODULES: PlacedModule[] = [
     notesHe: 'משטח שיש רצוף העובר מתחת לארון המכשירים עד קיר שמאל!',
     priceIls: 4100
   },
-  // Corner Appliance Garage sitting ON TOP of the Countertop (Y=90..200) with Curved Tambour Shutter
+  // Corner Appliance Garage sitting ON TOP of the Countertop (Y=90..153, Net H=63cm) with Curved Tambour Shutter
   {
     id: 'planA-appliance-garage',
     sku: 'APPL-TAMBOUR-60',
@@ -291,28 +291,29 @@ export const PLAN_A_MODULES: PlacedModule[] = [
     wallId: 'back-wall',
     position: [257, 90, 645],
     rotation: 0,
-    dimensions: { width: 60, height: 110, depth: 60 },
+    dimensions: { width: 60, height: 63, depth: 60 },
     doorType: 'tambour',
     openPercent: 0,
     isAppliance: true,
     applianceType: 'appliance-garage',
-    notesHe: 'יושב ישירות על השיש! תריס נגלל קשתי (Tambour) לנצילות מקסימלית ואפס התנגשות עם דלתות סמוכות',
+    notesHe: 'יושב ישירות על השיש ומגיע בדיוק עד תחתית הארונות העליונים (90 עד 153 ס"מ)! תריס נגלל קשתי (Tambour) לנצילות מקסימלית ואפס התנגשות עם דלתות סמוכות',
     priceIls: 4200
   },
-  // Appliance Garage Upper Pesach Unit (Y=200..246)
+  // Appliance Garage Upper Unit (Y=153..246, Net H=93cm flush to ceiling)
   {
     id: 'planA-garage-pesach-top',
     sku: 'WALL-GARAGE-PESACH',
-    nameHe: 'קלפה עליונה לפסח מעל ארון מכשירים עד 246 ס"מ',
+    nameHe: 'ארון עליון לפסח מעל ארון מכשירים עד התקרה (246 ס"מ)',
     category: 'wall',
     kosherZone: 'pareve',
     wallId: 'back-wall',
-    position: [257, 200, 645],
+    position: [257, 153, 645],
     rotation: 0,
-    dimensions: { width: 60, height: 46, depth: 60 },
+    dimensions: { width: 60, height: 93, depth: 60 },
     doorType: 'lift-up',
     openPercent: 0,
-    priceIls: 1300
+    notesHe: 'ממשיך את קו הארונות העליונים ב-153 ס"מ עד התקרה 246 ס"מ ביישור מלא עם מגדל האפייה',
+    priceIls: 1800
   },
   // Dairy Upper Cabinets Across Back Wall stopping above the sink (X=38 to X=207: 169cm)
   {
@@ -620,24 +621,42 @@ export const PLAN_B_MODULES: PlacedModule[] = [
     priceIls: 3400
   },
 
-  // ==================== BACK WALL (DAIRY WALL: 317 cm - OPEN CONTINUOUS COUNTER) ====================
-  // Continuous Dairy Countertop from X=65 to X=317 (252cm total)
+  // ==================== BACK WALL (DAIRY WALL: 317 cm - CENTERED SINK & BALANCED COUNTER) ====================
+  // 1. Right Prep & Drawers Unit 60cm (X=65..125)
   {
-    id: 'planB-dairy-sink-80',
-    sku: 'BASE-SINK-80-D',
-    nameHe: 'כיור חלבי רחב 80 ס"מ בהתקנה שטוחה',
+    id: 'planB-dairy-prep-60',
+    sku: 'BASE-DRW-60-D',
+    nameHe: 'משטח שיש ומגירות חלבי ימני 60 ס"מ',
     category: 'base',
     kosherZone: 'dairy',
     wallId: 'back-wall',
     position: [65, 0, 640],
+    rotation: 0,
+    dimensions: { width: 60, height: 90, depth: 65 },
+    doorType: 'drawers',
+    openPercent: 0,
+    notesHe: 'משטח עבודה מרווח מימין לכיור, מתחבר ב-ר\' לנישה 3',
+    priceIls: 2400
+  },
+  // 2. Centered Dairy Sink Unit 80cm (X=125..205)
+  {
+    id: 'planB-dairy-sink-80',
+    sku: 'BASE-SINK-80-D',
+    nameHe: 'כיור חלבי רחב 80 ס"מ בהתקנה שטוחה (ממורכז)',
+    category: 'base',
+    kosherZone: 'dairy',
+    wallId: 'back-wall',
+    position: [125, 0, 640],
     rotation: 0,
     dimensions: { width: 80, height: 90, depth: 65 },
     doorType: 'double-door',
     openPercent: 0,
     isAppliance: true,
     applianceType: 'sink',
+    notesHe: 'כיור חלבי מפואר ממורכז באזור החלבי עם מרחב עבודה נדיב משני צדדיו',
     priceIls: 3200
   },
+  // 3. Fully Integrated Dishwasher 60cm (X=205..265)
   {
     id: 'planB-dairy-dw-60',
     sku: 'BASE-DW-60-D',
@@ -645,7 +664,7 @@ export const PLAN_B_MODULES: PlacedModule[] = [
     category: 'base',
     kosherZone: 'dairy',
     wallId: 'back-wall',
-    position: [145, 0, 640],
+    position: [205, 0, 640],
     rotation: 0,
     dimensions: { width: 60, height: 90, depth: 65 },
     doorType: 'single-door',
@@ -654,36 +673,37 @@ export const PLAN_B_MODULES: PlacedModule[] = [
     applianceType: 'dishwasher',
     priceIls: 3800
   },
+  // 4. Continuous Left Prep & Drawers 52cm (X=265..317)
   {
-    id: 'planB-dairy-prep-112',
-    sku: 'BASE-PREP-112-D',
-    nameHe: 'משטח שיש חלבי רציף 112 ס"מ ומגירות רחבות (עד קיר שמאל)',
+    id: 'planB-dairy-prep-52',
+    sku: 'BASE-PREP-52-D',
+    nameHe: 'משטח שיש חלבי רציף 52 ס"מ ומגירות (עד קיר שמאל)',
     category: 'base',
     kosherZone: 'dairy',
     wallId: 'back-wall',
-    position: [205, 0, 640],
+    position: [265, 0, 640],
     rotation: 0,
-    dimensions: { width: 112, height: 90, depth: 65 },
+    dimensions: { width: 52, height: 90, depth: 65 },
     doorType: 'drawers',
     openPercent: 0,
-    notesHe: 'משטח שיש פתוח ומרווח המתחבר ב-ר\' לקיר שמאל',
-    priceIls: 4200
+    notesHe: 'משטח שיש רצוף המגיע עד קיר שמאל ומאפשר חיבור חופשי למרחב',
+    priceIls: 2100
   },
-  // Dairy Upper Cabinets Across Back Wall stopping above the sink (X=38 to X=145: 107cm)
+  // Dairy Upper Cabinets Across Back Wall stopping symmetrically above the centered sink (X=38 to X=205: 167cm)
   {
     id: 'planB-dairy-wall-sink-zone',
     sku: 'WALL-DAIRY-SINK-ZONE-B',
-    nameHe: 'ארונות עליונים חלביים מעל הכיור (עוצרים מעל הכיור)',
+    nameHe: 'ארונות עליונים חלביים מעל הכיור (167 ס"מ)',
     category: 'wall',
     kosherZone: 'dairy',
     wallId: 'back-wall',
     position: [38, 153, 667],
     rotation: 0,
-    dimensions: { width: 107, height: 93, depth: 38 },
+    dimensions: { width: 167, height: 93, depth: 38 },
     doorType: 'lift-up',
     openPercent: 0,
-    notesHe: 'ארונות עליונים הממשיכים את פינת ה-ר\' מנישה 3 ונעצרים מעל הכיור החלבי (משאירים חלל פתוח מעל המדיח והמשטח)',
-    priceIls: 3600
+    notesHe: 'ארונות עליונים אלגנטיים בחיבור רציף ב-ר\' מנישה 3, המשתרעים לאורך 167 ס"מ ונעצרים בדיוק מעל דופן הכיור הממורכז',
+    priceIls: 4800
   },
 
   // ==================== LEFT WALL (MAXIMIZED OPEN SPACE: >280 cm FREE!) ====================

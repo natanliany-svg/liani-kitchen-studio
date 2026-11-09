@@ -500,10 +500,24 @@ export const ThreeKitchenCanvas: React.FC<ThreeKitchenCanvasProps> = ({
           doorPivot.add(rightDoor);
         } else if (mod.doorType === 'tambour') {
           const rollUp = openPercent * (height - 4);
-          const shutterGeo = new THREE.BoxGeometry(2, Math.max(2, height - 2 - rollUp), width - 2);
+          const currentHeight = Math.max(2, height - 2 - rollUp);
+          const shutterGeo = new THREE.BoxGeometry(2, currentHeight, width - 2);
           const shutterMesh = new THREE.Mesh(shutterGeo, frontMat);
-          shutterMesh.position.set(depth + 1, (height - rollUp) / 2 + rollUp, width / 2);
+          shutterMesh.position.set(depth + 1, currentHeight / 2 + rollUp, width / 2);
           doorPivot.add(shutterMesh);
+
+          // Grip bar for roll-up shutter
+          const gripGeo = new THREE.CylinderGeometry(0.9, 0.9, width - 4, 16);
+          const gripMesh = new THREE.Mesh(gripGeo, metalMat);
+          gripMesh.position.set(depth + 2.2, rollUp + 2, width / 2);
+          doorPivot.add(gripMesh);
+
+          // Curved quarter-round corner post for luxury curved profile
+          const curveR = Math.min(depth * 0.35, 18);
+          const curveGeo = new THREE.CylinderGeometry(curveR, curveR, height, 24, 1, false, 0, Math.PI / 2);
+          const curveMesh = new THREE.Mesh(curveGeo, carcassMat);
+          curveMesh.position.set(depth - curveR, height / 2, width - curveR);
+          modGroup.add(curveMesh);
         } else if (mod.doorType !== 'none') {
           doorPivot.position.set(depth, 0, 0);
           doorPivot.rotation.y = openPercent * (Math.PI / 1.7);
@@ -557,7 +571,8 @@ export const ThreeKitchenCanvas: React.FC<ThreeKitchenCanvasProps> = ({
           doorPivot.add(handle);
         } else if (mod.doorType === 'lift-up') {
           doorPivot.position.set(0, height, 0);
-          doorPivot.rotation.x = -openPercent * (Math.PI / 2.2);
+          // Positive rotation around X swings bottom forward into -Z (into the room, zero wall penetration)
+          doorPivot.rotation.x = openPercent * (Math.PI / 2.2);
           const frontMesh = new THREE.Mesh(new THREE.BoxGeometry(width - 0.8, height - 0.8, 1.8), frontMat);
           frontMesh.position.set(width / 2, -height / 2, -0.9);
           doorPivot.add(frontMesh);
@@ -565,14 +580,16 @@ export const ThreeKitchenCanvas: React.FC<ThreeKitchenCanvasProps> = ({
           const angle = openPercent * (Math.PI / 1.7);
           const leftPivot = new THREE.Group();
           leftPivot.position.set(0, 0, 0);
-          leftPivot.rotation.y = -angle;
+          // Positive rotation around Y swings +X into -Z (into the room)
+          leftPivot.rotation.y = angle;
           const leftDoor = new THREE.Mesh(new THREE.BoxGeometry(width / 2 - 0.5, height - 2, 1.8), frontMat);
           leftDoor.position.set(width / 4, height / 2, -0.9);
           leftPivot.add(leftDoor);
 
           const rightPivot = new THREE.Group();
           rightPivot.position.set(width, 0, 0);
-          rightPivot.rotation.y = angle;
+          // Negative rotation around Y swings -X into -Z (into the room)
+          rightPivot.rotation.y = -angle;
           const rightDoor = new THREE.Mesh(new THREE.BoxGeometry(width / 2 - 0.5, height - 2, 1.8), frontMat);
           rightDoor.position.set(-width / 4, height / 2, -0.9);
           rightPivot.add(rightDoor);
@@ -588,14 +605,32 @@ export const ThreeKitchenCanvas: React.FC<ThreeKitchenCanvasProps> = ({
           doorPivot.add(leftDoor);
           doorPivot.add(rightDoor);
         } else if (mod.doorType === 'tambour') {
+          // Curved Tambour Shutter with slatted texture & bottom grip profile
           const rollUp = openPercent * (height - 4);
-          const shutterGeo = new THREE.BoxGeometry(width - 2, Math.max(2, height - 2 - rollUp), 2);
+          const currentHeight = Math.max(2, height - 2 - rollUp);
+          const shutterGeo = new THREE.BoxGeometry(width - 2, currentHeight, 2);
           const shutterMesh = new THREE.Mesh(shutterGeo, frontMat);
-          shutterMesh.position.set(width / 2, (height - rollUp) / 2 + rollUp, -1);
+          shutterMesh.position.set(width / 2, currentHeight / 2 + rollUp, -1);
           doorPivot.add(shutterMesh);
+
+          // Bottom Grip Bar for Tambour
+          const gripGeo = new THREE.CylinderGeometry(0.9, 0.9, width - 4, 16);
+          const gripMesh = new THREE.Mesh(gripGeo, metalMat);
+          gripMesh.rotation.z = Math.PI / 2;
+          gripMesh.position.set(width / 2, rollUp + 2, -2.2);
+          doorPivot.add(gripMesh);
+
+          // Curved quarter-round corner post for luxury curved profile
+          const curveR = Math.min(depth * 0.35, 18);
+          const curveGeo = new THREE.CylinderGeometry(curveR, curveR, height, 24, 1, false, 0, Math.PI / 2);
+          const curveMesh = new THREE.Mesh(curveGeo, carcassMat);
+          curveMesh.position.set(curveR, height / 2, curveR);
+          curveMesh.rotation.y = Math.PI;
+          modGroup.add(curveMesh);
         } else if (mod.doorType !== 'none') {
           doorPivot.position.set(0, 0, 0);
-          doorPivot.rotation.y = -openPercent * (Math.PI / 1.7);
+          // Positive rotation around Y swings +X into -Z (into the room)
+          doorPivot.rotation.y = openPercent * (Math.PI / 1.7);
           const frontMesh = new THREE.Mesh(new THREE.BoxGeometry(width - 0.8, height - 2, 1.8), frontMat);
           frontMesh.position.set(width / 2, height / 2, -0.9);
           doorPivot.add(frontMesh);

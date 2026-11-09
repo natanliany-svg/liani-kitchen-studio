@@ -82,7 +82,19 @@ const bFreezer = PLAN_B_MODULES.find(m => m.id === 'planB-freezer-lower-cube')!;
 const bGarage = PLAN_B_MODULES.find(m => m.id === 'planB-appliance-garage-tambour')!;
 assert(Boolean(bFreezer && bGarage), 'Plan B must have freezer and tambour appliance garage');
 assert(bFreezer.position[1] === 0 && bGarage.position[1] === 90, 'Plan B freezer is bottom (Y=0..90) and garage sits on countertop (Y=90..153)');
+assert(bGarage.dimensions.height === 63, 'Plan B appliance garage must have net height 63 cm (Y=90..153 flush with upper wall cabinets)');
 assert(bGarage.doorType === 'tambour', 'Plan B appliance garage must have curved tambour shutter');
+
+// Centered Dairy Sink in Plan B
+const bSink = PLAN_B_MODULES.find(m => m.id === 'planB-dairy-sink-80')!;
+assert(Boolean(bSink), 'Plan B must have dairy sink');
+assert(bSink.position[0] === 125, `Plan B dairy sink must be centered at X=125 with generous prep counter on both sides (found X=${bSink.position[0]})`);
+assert(bSink.dimensions.width === 80, 'Plan B dairy sink must be wide 80 cm');
+
+// Balanced Upper Cabinets in Plan B
+const bWall = PLAN_B_MODULES.find(m => m.id === 'planB-dairy-wall-sink-zone')!;
+assert(Boolean(bWall), 'Plan B must have upper wall cabinet on back wall');
+assert(bWall.dimensions.width === 167, `Plan B upper wall cabinet must span 167 cm to balance back wall (found width=${bWall.dimensions.width})`);
 
 // Cooktop on Right assertions
 assert(PLAN_A_MODULES.find(m => m.applianceType === 'cooktop')!.position[2] === 288, 'Plan A cooktop must be on right at Z=288');
@@ -92,12 +104,15 @@ assert(PLAN_B_MODULES.find(m => m.applianceType === 'cooktop')!.position[2] === 
 assert(!PLAN_A_MODULES.some(m => m.applianceType === 'table'), 'Plan A must have NO dining table in central floor');
 assert(!PLAN_B_MODULES.some(m => m.applianceType === 'table'), 'Plan B must have NO dining table in central floor');
 
-// Continuous Countertop in Plan A
+// Continuous Countertop & Tambour in Plan A
 const aPrep = PLAN_A_MODULES.find(m => m.id === 'planA-dairy-prep-110')!;
 const aGarage = PLAN_A_MODULES.find(m => m.id === 'planA-appliance-garage')!;
+const aGarageTop = PLAN_A_MODULES.find(m => m.id === 'planA-garage-pesach-top')!;
 assert(aPrep.position[0] + aPrep.dimensions.width === 317, 'Plan A base countertop must run continuously to X=317');
 assert(aGarage.position[1] === 90, 'Plan A appliance garage must sit directly on the countertop at Y=90');
+assert(aGarage.dimensions.height === 63, 'Plan A appliance garage must have net height 63 cm (Y=90..153 flush to upper wall cabinets)');
 assert(aGarage.doorType === 'tambour', 'Plan A appliance garage must have curved tambour shutter');
+assert(aGarageTop.position[1] === 153 && aGarageTop.dimensions.height === 93, 'Plan A upper unit above garage must span Y=153..246 (height 93 cm) to reach ceiling');
 
 const issuesB = validateKitchen(PLAN_B_MODULES);
 const errorsB = issuesB.filter(i => i.type === 'error');
