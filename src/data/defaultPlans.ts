@@ -552,7 +552,7 @@ export const PLAN_B_MODULES: PlacedModule[] = [
   },
 
   // ==================== NICHE 3 (RIGHT REAR CORNER: 124 cm) ====================
-  // 1. Lower Built-in Under-Counter Freezer (0-90cm, width 60cm)
+  // 1. Lower Built-in Under-Counter Freezer (0-90cm, width 60cm, depth 65cm)
   {
     id: 'planB-freezer-lower-cube',
     sku: 'REF-FRZ-CUBE-60',
@@ -562,15 +562,47 @@ export const PLAN_B_MODULES: PlacedModule[] = [
     wallId: 'right-niche3',
     position: [0, 0, 581],
     rotation: 90,
-    dimensions: { width: 60, height: 90, depth: 75 },
+    dimensions: { width: 60, height: 90, depth: 65 },
     doorType: 'drawers',
     openPercent: 0,
     isAppliance: true,
     applianceType: 'freezer',
-    notesHe: 'מקפיא מובנה תחתון בנישה 3, מאפשר המשך רציף מעליו',
+    notesHe: 'מקפיא מובנה תחתון בנישה 3 בקו 0 מלא',
     priceIls: 4600
   },
-  // 2. Remaining 64cm in Niche 3: Base Countertop connecting in L-shape to Back Wall!
+  // 2. Middle Appliance / Pantry Enclosure above Freezer (90-153cm, width 60cm, depth 65cm)
+  {
+    id: 'planB-freezer-mid-cabinet',
+    sku: 'WALL-FRZ-MID-60',
+    nameHe: 'ארון מכשירים / מזווה מעל מקפיא (90 עד 153 ס"מ)',
+    category: 'wall',
+    kosherZone: 'neutral',
+    wallId: 'right-niche3',
+    position: [0, 90, 581],
+    rotation: 90,
+    dimensions: { width: 60, height: 63, depth: 65 },
+    doorType: 'lift-up',
+    openPercent: 0,
+    notesHe: 'ממשיך את עמודת המקפיא לגובה עד תחתית הארונות העליונים בקו 0 נקי',
+    priceIls: 2200
+  },
+  // 3. Upper Wall Pesach Cabinet above Freezer to Ceiling (153-246cm, width 60cm, depth 65cm)
+  {
+    id: 'planB-freezer-top-pesach',
+    sku: 'WALL-FRZ-TOP-60',
+    nameHe: 'ארון עליון לפסח מעל מקפיא (קו 0 עד 246 ס"מ)',
+    category: 'wall',
+    kosherZone: 'neutral',
+    wallId: 'right-niche3',
+    position: [0, 153, 581],
+    rotation: 90,
+    dimensions: { width: 60, height: 93, depth: 65 },
+    doorType: 'lift-up',
+    openPercent: 0,
+    notesHe: 'סגירה עליונה הרמטית עד התקרה 246 ס"מ בעומק 65 ס"מ בקו 0 מושלם',
+    priceIls: 2100
+  },
+  // 4. Remaining 64cm in Niche 3: Base Countertop connecting in L-shape to Back Wall!
   {
     id: 'planB-niche3-corner-base',
     sku: 'BASE-RETURN-64',
@@ -586,11 +618,11 @@ export const PLAN_B_MODULES: PlacedModule[] = [
     notesHe: 'משטח עבודה רצוף המתחבר ישירות לקיר האחורי החלבי',
     priceIls: 2600
   },
-  // 3. Compact Appliance Garage on Countertop with Curved Tambour Shutter (Y=90..153)
+  // 5. Compact Appliance Garage on Countertop with Curved Tambour Shutter (Y=90..153)
   {
     id: 'planB-appliance-garage-tambour',
     sku: 'APPL-TAMBOUR-CORNER-55',
-    nameHe: 'ארון מכשירים פינתי על גבי השיש (תריס נגלל בחצי עיגול)',
+    nameHe: 'ארון מכשירים פינתי על גבי השיש (חזית קשתית ותריס נגלל)',
     category: 'wall',
     kosherZone: 'pareve',
     wallId: 'right-niche3',
@@ -601,24 +633,24 @@ export const PLAN_B_MODULES: PlacedModule[] = [
     openPercent: 0,
     isAppliance: true,
     applianceType: 'appliance-garage',
-    notesHe: 'יושב ישירות על השיש מתחת לארונות העליונים! תריס קשתי נגלל (Tambour) לנצילות מקסימלית',
+    notesHe: 'יושב ישירות על השיש מתחת לארונות העליונים! חזית קשתית עגולה עם תריס נגלל (Tambour) לנצילות מקסימלית',
     priceIls: 3900
   },
-  // 4. Upper Kitchen Cabinets in L-shape connecting Niche 3 to Back Wall (Y=153..246, height 93cm)
+  // 6. Upper Kitchen Cabinets in L-shape connecting Niche 3 to Back Wall (Y=153..246, height 93cm, depth 65cm in line with freezer!)
   {
     id: 'planB-niche3-wall-corner',
-    sku: 'WALL-CORNER-124',
-    nameHe: 'ארונות עליונים ב-ר\' (נישה 3 עד פינת הקיר האחורי)',
+    sku: 'WALL-CORNER-64',
+    nameHe: 'ארונות עליונים פינתיים ב-ר\' (עומק 65 ס"מ בקו 0 מלא עם עמודת המקפיא)',
     category: 'wall',
     kosherZone: 'pareve',
     wallId: 'right-niche3',
-    position: [0, 153, 581],
+    position: [0, 153, 641],
     rotation: 90,
-    dimensions: { width: 124, height: 93, depth: 38 },
+    dimensions: { width: 64, height: 93, depth: 65 },
     doorType: 'lift-up',
     openPercent: 0,
-    notesHe: 'ארונות עליונים המכסים את שטח הנישה ומתחברים ב-ר\' לארונות הקיר החלבי עד התקרה 246 ס"מ',
-    priceIls: 3400
+    notesHe: 'ארונות עליונים המתרחבים כלפי חוץ לעומק 65 ס"מ – מסתיימים בקו 0 נקי מול עמודת המקפיא ומתחברים לקיר האחורי',
+    priceIls: 2800
   },
 
   // ==================== BACK WALL (DAIRY WALL: 317 cm - CENTERED SINK & BALANCED COUNTER) ====================
@@ -689,21 +721,21 @@ export const PLAN_B_MODULES: PlacedModule[] = [
     notesHe: 'משטח שיש רצוף המגיע עד קיר שמאל ומאפשר חיבור חופשי למרחב',
     priceIls: 2100
   },
-  // Dairy Upper Cabinets Across Back Wall stopping symmetrically above the centered sink (X=38 to X=205: 167cm)
+  // Dairy Upper Cabinets Across Back Wall stopping symmetrically above the centered sink (X=65 to X=205: 140cm)
   {
     id: 'planB-dairy-wall-sink-zone',
     sku: 'WALL-DAIRY-SINK-ZONE-B',
-    nameHe: 'ארונות עליונים חלביים מעל הכיור (167 ס"מ)',
+    nameHe: 'ארונות עליונים חלביים מעל הכיור (140 ס"מ)',
     category: 'wall',
     kosherZone: 'dairy',
     wallId: 'back-wall',
-    position: [38, 153, 667],
+    position: [65, 153, 667],
     rotation: 0,
-    dimensions: { width: 167, height: 93, depth: 38 },
+    dimensions: { width: 140, height: 93, depth: 38 },
     doorType: 'lift-up',
     openPercent: 0,
-    notesHe: 'ארונות עליונים אלגנטיים בחיבור רציף ב-ר\' מנישה 3, המשתרעים לאורך 167 ס"מ ונעצרים בדיוק מעל דופן הכיור הממורכז',
-    priceIls: 4800
+    notesHe: 'ארונות עליונים אלגנטיים המתחברים בקו 0 מלא לדופן ארונות נישה 3 ומסתיימים בדיוק מעל דופן הכיור הממורכז',
+    priceIls: 4200
   },
 
   // ==================== LEFT WALL (MAXIMIZED OPEN SPACE: >280 cm FREE!) ====================

@@ -6,14 +6,45 @@ export const NicheStatusHUD: React.FC = () => {
   const nicheUsage = useKitchenStore(state => state.nicheUsage);
   const validationIssues = useKitchenStore(state => state.validationIssues);
   const activePlan = useKitchenStore(state => state.activePlan);
+  const [mobileExpanded, setMobileExpanded] = React.useState(false);
 
   const errors = validationIssues.filter(i => i.type === 'error');
   const warnings = validationIssues.filter(i => i.type === 'warning');
 
   return (
     <div className="w-full bg-slate-900/95 backdrop-blur-md border-b border-slate-800 text-white select-none shrink-0 z-20">
-      {/* Niche Capacity Cards */}
-      <div className="w-full px-3 py-1.5 flex items-center gap-2 overflow-x-auto text-xs scrollbar-none">
+      {/* Mobile Compact Status Pill */}
+      <div className="sm:hidden flex items-center justify-between px-3 py-1 text-xs">
+        <button
+          onClick={() => setMobileExpanded(!mobileExpanded)}
+          className="flex items-center gap-1.5 bg-slate-800 px-2 py-0.5 rounded text-[11px] border border-slate-700 text-slate-300 active:scale-95 transition-all"
+        >
+          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+          <span className="font-bold text-amber-400">
+            {activePlan === 'plan-A' ? "תוכנית א'" : "תוכנית ב'"}
+          </span>
+          <span className="text-slate-400">| נישות וקיבולת</span>
+          <span className="text-[10px] text-sky-400 underline font-semibold mr-1">
+            {mobileExpanded ? 'סגור ▴' : 'פירוט ▾'}
+          </span>
+        </button>
+
+        <div className="flex items-center gap-1">
+          {errors.length > 0 ? (
+            <span className="text-[10px] bg-rose-900 text-rose-200 px-2 py-0.5 rounded font-bold">
+              {errors.length} שגיאות
+            </span>
+          ) : (
+            <span className="text-[10px] bg-emerald-950 text-emerald-300 border border-emerald-800 px-2 py-0.5 rounded font-bold flex items-center gap-1">
+              <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+              100% תקין
+            </span>
+          )}
+        </div>
+      </div>
+
+      {/* Full Capacity Cards (Desktop Always Visible, Mobile Collapsible) */}
+      <div className={`w-full px-3 py-1.5 items-center gap-2 overflow-x-auto text-xs scrollbar-none ${mobileExpanded ? 'flex' : 'hidden sm:flex'}`}>
         <div className="flex items-center gap-1.5 shrink-0 bg-slate-800/90 px-2.5 py-1 rounded-md border border-slate-700 text-[11px]">
           <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
           <span className="text-amber-400 font-bold">

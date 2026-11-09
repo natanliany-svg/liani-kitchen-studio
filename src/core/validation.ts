@@ -2,8 +2,8 @@ import { PlacedModule, ValidationIssue, NicheInfo, BOMSummary } from '../types/k
 import { NICHE_BOUNDS, ROOM_SPEC } from '../data/roomSpec';
 
 export function calculateNicheUsage(modules: PlacedModule[]): NicheInfo[] {
-  // Filter base/tall/appliance units occupying floor space in each niche
-  const floorModules = modules.filter(m => m.category !== 'wall');
+  // Filter base/tall/appliance units occupying floor space in each niche (Y === 0)
+  const floorModules = modules.filter(m => m.category !== 'wall' && (m.position[1] ?? 0) === 0);
 
   // Helper to determine module wall if free
   const getEffectiveWall = (m: PlacedModule): PlacedModule['wallId'] => {

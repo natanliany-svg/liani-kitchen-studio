@@ -79,11 +79,20 @@ assert(n3UsageB.usedCm === 124, `Plan B Niche 3 used space (${n3UsageB.usedCm} c
 
 // Niche 3 Tambour Appliance Garage & L-Corner Cabinets Assertion
 const bFreezer = PLAN_B_MODULES.find(m => m.id === 'planB-freezer-lower-cube')!;
+const bFreezerMid = PLAN_B_MODULES.find(m => m.id === 'planB-freezer-mid-cabinet')!;
+const bFreezerTop = PLAN_B_MODULES.find(m => m.id === 'planB-freezer-top-pesach')!;
 const bGarage = PLAN_B_MODULES.find(m => m.id === 'planB-appliance-garage-tambour')!;
+const bCornerWall = PLAN_B_MODULES.find(m => m.id === 'planB-niche3-wall-corner')!;
+
 assert(Boolean(bFreezer && bGarage), 'Plan B must have freezer and tambour appliance garage');
 assert(bFreezer.position[1] === 0 && bGarage.position[1] === 90, 'Plan B freezer is bottom (Y=0..90) and garage sits on countertop (Y=90..153)');
 assert(bGarage.dimensions.height === 63, 'Plan B appliance garage must have net height 63 cm (Y=90..153 flush with upper wall cabinets)');
 assert(bGarage.doorType === 'tambour', 'Plan B appliance garage must have curved tambour shutter');
+
+// Tall Freezer Column & 0-Line Depth Alignment Assertions
+assert(Boolean(bFreezerMid && bFreezerTop), 'Plan B must have tall freezer enclosure cabinets reaching ceiling (Y=0..246)');
+assert(bCornerWall.dimensions.depth === 65, `Plan B upper corner cabinet must extend to depth 65 cm to match freezer column in 0-line (found depth=${bCornerWall.dimensions.depth})`);
+assert(bFreezerTop.dimensions.depth === 65, 'Plan B upper freezer pesach unit must have depth 65 cm');
 
 // Centered Dairy Sink in Plan B
 const bSink = PLAN_B_MODULES.find(m => m.id === 'planB-dairy-sink-80')!;
@@ -94,7 +103,7 @@ assert(bSink.dimensions.width === 80, 'Plan B dairy sink must be wide 80 cm');
 // Balanced Upper Cabinets in Plan B
 const bWall = PLAN_B_MODULES.find(m => m.id === 'planB-dairy-wall-sink-zone')!;
 assert(Boolean(bWall), 'Plan B must have upper wall cabinet on back wall');
-assert(bWall.dimensions.width === 167, `Plan B upper wall cabinet must span 167 cm to balance back wall (found width=${bWall.dimensions.width})`);
+assert(bWall.dimensions.width === 140, `Plan B upper wall cabinet must span 140 cm from Niche 3 to sink edge (found width=${bWall.dimensions.width})`);
 
 // Cooktop on Right assertions
 assert(PLAN_A_MODULES.find(m => m.applianceType === 'cooktop')!.position[2] === 288, 'Plan A cooktop must be on right at Z=288');

@@ -316,36 +316,45 @@ export const ThreeKitchenCanvas: React.FC<ThreeKitchenCanvasProps> = ({
         else if (mod.kosherZone === 'pareve') frontHex = 0x5cb85c; // Natural sage green
       }
 
+      // Enhanced PBR Architectural Materials
+      const isWallUnit = mod.category === 'wall' || mod.doorType === 'lift-up';
+      const frontMat = new THREE.MeshStandardMaterial({
+        color: isSelected ? 0xffcc00 : isWallUnit ? colors.woodAccent : frontHex,
+        roughness: isWallUnit ? 0.6 : 0.45,
+        metalness: isWallUnit ? 0.05 : 0.12,
+        emissive: isSelected ? 0x443300 : 0x000000
+      });
+
       const carcassMat = new THREE.MeshStandardMaterial({
         color: colors.carcass,
         roughness: 0.6,
-        metalness: 0.1
+        metalness: 0.08
       });
 
-      const frontMat = new THREE.MeshStandardMaterial({
-        color: isSelected ? 0xffcc00 : frontHex,
-        roughness: 0.45,
-        metalness: 0.15,
-        emissive: isSelected ? 0x332200 : 0x000000
-      });
-
-      const countertopMat = new THREE.MeshStandardMaterial({
+      // Photorealistic Polished Quartz / Marble Countertop with Clearcoat
+      const countertopMat = new THREE.MeshPhysicalMaterial({
         color: colors.countertop,
-        roughness: 0.25,
-        metalness: 0.1
+        roughness: 0.12,
+        metalness: 0.05,
+        clearcoat: 1.0,
+        clearcoatRoughness: 0.08,
+        reflectivity: 0.95
       });
 
+      // Brushed Architectural Metal (Handles, Tambour Rails, Faucets)
       const metalMat = new THREE.MeshStandardMaterial({
-        color: 0xcccccc,
-        roughness: 0.2,
-        metalness: 0.85
+        color: colors.metal,
+        roughness: 0.18,
+        metalness: 0.88
       });
 
+      // Architectural Fluted / Tinted Glass
       const glassMat = new THREE.MeshPhysicalMaterial({
-        color: 0x111111,
-        roughness: 0.1,
-        transmission: 0.7,
-        thickness: 2
+        color: 0x18181b,
+        roughness: 0.08,
+        transmission: 0.82,
+        thickness: 2,
+        ior: 1.52
       });
 
       const { width, height, depth } = mod.dimensions;
@@ -499,25 +508,70 @@ export const ThreeKitchenCanvas: React.FC<ThreeKitchenCanvasProps> = ({
           doorPivot.add(leftDoor);
           doorPivot.add(rightDoor);
         } else if (mod.doorType === 'tambour') {
-          const rollUp = openPercent * (height - 4);
-          const currentHeight = Math.max(2, height - 2 - rollUp);
-          const shutterGeo = new THREE.BoxGeometry(2, currentHeight, width - 2);
+          // ================= RIGHT WALL CURVED TAMBOUR GARAGE =================
+          const radius = Math.min(width, depth);
+          const rollUp = openPercent * (height - 6);
+          const currentH = Math.max(2, height - 4 - rollUp);
+
+          // Interior Accent Light
+          const garageLight = new THREE.PointLight(0xffdfaa, 1.8, 180);
+          garageLight.position.set(depth - radius * 0.45, height - 12, width - radius * 0.45);
+          modGroup.add(garageLight);
+
+          // Stand Mixer inside garage
+          const mixerGroup = new THREE.Group();
+          mixerGroup.position.set(depth - radius * 0.5, 4, width - radius * 0.5);
+          mixerGroup.rotation.y = Math.PI / 4;
+
+          const mixerBase = new THREE.Mesh(new THREE.BoxGeometry(14, 3.5, 22), metalMat);
+          mixerBase.position.set(0, 1.75, 0);
+          mixerGroup.add(mixerBase);
+
+          const bowl = new THREE.Mesh(new THREE.CylinderGeometry(7.5, 5, 12, 24), metalMat);
+          bowl.position.set(0, 9.5, -3);
+          mixerGroup.add(bowl);
+
+          const mixerHead = new THREE.Mesh(new THREE.BoxGeometry(9, 7.5, 18), frontMat);
+          mixerHead.position.set(0, 18, 2);
+          mixerGroup.add(mixerHead);
+
+          modGroup.add(mixerGroup);
+
+          // Curved Cylindrical Sector Shutter along radius arc
+          const shutterGeo = new THREE.CylinderGeometry(
+            radius - 1,
+            radius - 1,
+            currentH,
+            36,
+            1,
+            true,
+            0,
+            Math.PI / 2
+          );
           const shutterMesh = new THREE.Mesh(shutterGeo, frontMat);
-          shutterMesh.position.set(depth + 1, currentHeight / 2 + rollUp, width / 2);
+          shutterMesh.position.set(depth, currentH / 2 + rollUp + 2, width);
           doorPivot.add(shutterMesh);
 
-          // Grip bar for roll-up shutter
-          const gripGeo = new THREE.CylinderGeometry(0.9, 0.9, width - 4, 16);
-          const gripMesh = new THREE.Mesh(gripGeo, metalMat);
-          gripMesh.position.set(depth + 2.2, rollUp + 2, width / 2);
-          doorPivot.add(gripMesh);
-
-          // Curved quarter-round corner post for luxury curved profile
-          const curveR = Math.min(depth * 0.35, 18);
-          const curveGeo = new THREE.CylinderGeometry(curveR, curveR, height, 24, 1, false, 0, Math.PI / 2);
-          const curveMesh = new THREE.Mesh(curveGeo, carcassMat);
-          curveMesh.position.set(depth - curveR, height / 2, width - curveR);
-          modGroup.add(curveMesh);
+          // Bottom Grip bar along curved arc
+          const gripSegments = 16;
+          const gripGroup = new THREE.Group();
+          for (let s = 0; s < gripSegments; s++) {
+            const a1 = (s / gripSegments) * (Math.PI / 2);
+            const a2 = ((s + 1) / gripSegments) * (Math.PI / 2);
+            const rBar = radius + 0.8;
+            const x1 = Math.cos(a1) * rBar;
+            const z1 = Math.sin(a1) * rBar;
+            const x2 = Math.cos(a2) * rBar;
+            const z2 = Math.sin(a2) * rBar;
+            const segLen = Math.hypot(x2 - x1, z2 - z1);
+            const segMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.8, 0.8, segLen, 8), metalMat);
+            segMesh.position.set((x1 + x2) / 2, rollUp + 3, (z1 + z2) / 2);
+            segMesh.rotation.z = Math.PI / 2;
+            segMesh.rotation.y = -Math.atan2(z2 - z1, x2 - x1);
+            gripGroup.add(segMesh);
+          }
+          gripGroup.position.set(depth, 0, width);
+          doorPivot.add(gripGroup);
         } else if (mod.doorType !== 'none') {
           doorPivot.position.set(depth, 0, 0);
           doorPivot.rotation.y = openPercent * (Math.PI / 1.7);
@@ -530,112 +584,190 @@ export const ThreeKitchenCanvas: React.FC<ThreeKitchenCanvasProps> = ({
       } else if (mod.rotation === 0) {
         // Back wall modules: width along X (0..width), height along Y (0..height), depth along Z (0..depth)
         // Front face is at local Z = 0, facing -Z into room towards entrance
-        const carcassGeo = new THREE.BoxGeometry(width, height, depth);
-        const carcassMesh = new THREE.Mesh(carcassGeo, carcassMat);
-        carcassMesh.position.set(width / 2, height / 2, depth / 2);
-        carcassMesh.castShadow = true;
-        carcassMesh.receiveShadow = true;
-        modGroup.add(carcassMesh);
+        
+        if (mod.doorType === 'tambour') {
+          // ================= CURVED LUXURY APPLIANCE GARAGE (QUARTER-ROUND) =================
+          const radius = Math.min(width, depth);
+          
+          // 1. Back and Side Enclosure Panels
+          const backPanel = new THREE.Mesh(new THREE.BoxGeometry(width, height, 2), carcassMat);
+          backPanel.position.set(width / 2, height / 2, depth - 1);
+          modGroup.add(backPanel);
 
-        if (mod.category === 'base') {
-          const ctGeo = new THREE.BoxGeometry(width, 3.5, depth + 2);
-          const ctMesh = new THREE.Mesh(ctGeo, countertopMat);
-          ctMesh.position.set(width / 2, height - 1.75, depth / 2 - 1);
-          ctMesh.castShadow = true;
-          modGroup.add(ctMesh);
+          const sidePanel = new THREE.Mesh(new THREE.BoxGeometry(2, height, depth), carcassMat);
+          sidePanel.position.set(width - 1, height / 2, depth / 2);
+          modGroup.add(sidePanel);
 
-          if (mod.applianceType === 'sink') {
-            const basinGeo = new THREE.BoxGeometry(width * 0.75, 18, depth * 0.65);
-            const basinMesh = new THREE.Mesh(basinGeo, metalMat);
-            basinMesh.position.set(width / 2, height - 9, depth / 2);
-            modGroup.add(basinMesh);
+          // Top and Bottom Curved Sector Caps
+          const capGeo = new THREE.CylinderGeometry(radius, radius, 2.5, 32, 1, false, Math.PI, Math.PI / 2);
+          const topCap = new THREE.Mesh(capGeo, carcassMat);
+          topCap.position.set(width, height - 1.25, depth);
+          modGroup.add(topCap);
 
-            const faucetGeo = new THREE.CylinderGeometry(1.5, 1.5, 32);
-            const faucetMesh = new THREE.Mesh(faucetGeo, metalMat);
-            faucetMesh.position.set(width / 2, height + 16, depth / 2 + 12);
-            modGroup.add(faucetMesh);
-          }
-        }
+          const bottomCap = new THREE.Mesh(capGeo, carcassMat);
+          bottomCap.position.set(width, 1.25, depth);
+          modGroup.add(bottomCap);
 
-        // Kinetic Doors / Drawers for Back Wall
-        const doorPivot = new THREE.Group();
-        if (mod.doorType === 'drawers') {
-          doorPivot.position.set(0, 0, -openPercent * 35);
-          const frontMesh = new THREE.Mesh(new THREE.BoxGeometry(width - 0.8, height - 8, 1.8), frontMat);
-          frontMesh.position.set(width / 2, height / 2, -0.9);
-          doorPivot.add(frontMesh);
+          // 2. Interior Warm Accent LED Lighting
+          const garageLight = new THREE.PointLight(0xffdfaa, 1.8, 180);
+          garageLight.position.set(width - radius * 0.45, height - 12, depth - radius * 0.45);
+          modGroup.add(garageLight);
 
-          const handle = new THREE.Mesh(new THREE.CylinderGeometry(0.8, 0.8, width * 0.5), metalMat);
-          handle.rotation.z = Math.PI / 2;
-          handle.position.set(width / 2, height * 0.7, -3);
-          doorPivot.add(handle);
-        } else if (mod.doorType === 'lift-up') {
-          doorPivot.position.set(0, height, 0);
-          // Positive rotation around X swings bottom forward into -Z (into the room, zero wall penetration)
-          doorPivot.rotation.x = openPercent * (Math.PI / 2.2);
-          const frontMesh = new THREE.Mesh(new THREE.BoxGeometry(width - 0.8, height - 0.8, 1.8), frontMat);
-          frontMesh.position.set(width / 2, -height / 2, -0.9);
-          doorPivot.add(frontMesh);
-        } else if (mod.doorType === 'double-door') {
-          const angle = openPercent * (Math.PI / 1.7);
-          const leftPivot = new THREE.Group();
-          leftPivot.position.set(0, 0, 0);
-          // Positive rotation around Y swings +X into -Z (into the room)
-          leftPivot.rotation.y = angle;
-          const leftDoor = new THREE.Mesh(new THREE.BoxGeometry(width / 2 - 0.5, height - 2, 1.8), frontMat);
-          leftDoor.position.set(width / 4, height / 2, -0.9);
-          leftPivot.add(leftDoor);
+          // 3. Realistic 3D Stand Mixer (KitchenAid style) inside garage
+          const mixerGroup = new THREE.Group();
+          mixerGroup.position.set(width - radius * 0.55, 4, depth - radius * 0.55);
+          mixerGroup.rotation.y = -Math.PI / 4; // Faces diagonally into room
 
-          const rightPivot = new THREE.Group();
-          rightPivot.position.set(width, 0, 0);
-          // Negative rotation around Y swings -X into -Z (into the room)
-          rightPivot.rotation.y = -angle;
-          const rightDoor = new THREE.Mesh(new THREE.BoxGeometry(width / 2 - 0.5, height - 2, 1.8), frontMat);
-          rightDoor.position.set(-width / 4, height / 2, -0.9);
-          rightPivot.add(rightDoor);
+          // Mixer base
+          const mixerBase = new THREE.Mesh(new THREE.BoxGeometry(14, 3.5, 22), metalMat);
+          mixerBase.position.set(0, 1.75, 0);
+          mixerGroup.add(mixerBase);
 
-          doorPivot.add(leftPivot);
-          doorPivot.add(rightPivot);
-        } else if (mod.doorType === 'pocket') {
-          const slide = openPercent * (width * 0.45);
-          const leftDoor = new THREE.Mesh(new THREE.BoxGeometry(width / 2 - 1, height - 2, 1.8), frontMat);
-          leftDoor.position.set(width / 4 - slide, height / 2, -0.9);
-          const rightDoor = new THREE.Mesh(new THREE.BoxGeometry(width / 2 - 1, height - 2, 1.8), frontMat);
-          rightDoor.position.set((3 * width) / 4 + slide, height / 2, -0.9);
-          doorPivot.add(leftDoor);
-          doorPivot.add(rightDoor);
-        } else if (mod.doorType === 'tambour') {
-          // Curved Tambour Shutter with slatted texture & bottom grip profile
-          const rollUp = openPercent * (height - 4);
-          const currentHeight = Math.max(2, height - 2 - rollUp);
-          const shutterGeo = new THREE.BoxGeometry(width - 2, currentHeight, 2);
+          // Stainless steel bowl
+          const bowlGeo = new THREE.CylinderGeometry(7.5, 5, 12, 24);
+          const bowl = new THREE.Mesh(bowlGeo, metalMat);
+          bowl.position.set(0, 9.5, -3);
+          mixerGroup.add(bowl);
+
+          // Mixer tilt-head
+          const headGeo = new THREE.BoxGeometry(9, 7.5, 18);
+          const mixerHead = new THREE.Mesh(headGeo, frontMat);
+          mixerHead.position.set(0, 18, 2);
+          mixerGroup.add(mixerHead);
+
+          // Speed dial
+          const dial = new THREE.Mesh(new THREE.CylinderGeometry(1.2, 1.2, 2, 16), metalMat);
+          dial.rotation.z = Math.PI / 2;
+          dial.position.set(4.8, 18, 4);
+          mixerGroup.add(dial);
+
+          modGroup.add(mixerGroup);
+
+          // 4. Kinetic Curved Roll-up Tambour Shutter Front
+          const doorPivot = new THREE.Group();
+          const rollUp = openPercent * (height - 6);
+          const currentH = Math.max(2, height - 4 - rollUp);
+
+          // Curved Cylindrical Sector Shutter along radius arc
+          const shutterGeo = new THREE.CylinderGeometry(
+            radius - 1, 
+            radius - 1, 
+            currentH, 
+            36, 
+            1, 
+            true, 
+            Math.PI, 
+            Math.PI / 2
+          );
           const shutterMesh = new THREE.Mesh(shutterGeo, frontMat);
-          shutterMesh.position.set(width / 2, currentHeight / 2 + rollUp, -1);
+          shutterMesh.position.set(width, currentH / 2 + rollUp + 2, depth);
           doorPivot.add(shutterMesh);
 
-          // Bottom Grip Bar for Tambour
-          const gripGeo = new THREE.CylinderGeometry(0.9, 0.9, width - 4, 16);
-          const gripMesh = new THREE.Mesh(gripGeo, metalMat);
-          gripMesh.rotation.z = Math.PI / 2;
-          gripMesh.position.set(width / 2, rollUp + 2, -2.2);
-          doorPivot.add(gripMesh);
+          // Curved Bottom Grip Bar following the circular arc
+          const gripSegments = 16;
+          const gripGroup = new THREE.Group();
+          for (let s = 0; s < gripSegments; s++) {
+            const a1 = Math.PI + (s / gripSegments) * (Math.PI / 2);
+            const a2 = Math.PI + ((s + 1) / gripSegments) * (Math.PI / 2);
+            const rBar = radius + 0.8;
+            const x1 = Math.cos(a1) * rBar;
+            const z1 = Math.sin(a1) * rBar;
+            const x2 = Math.cos(a2) * rBar;
+            const z2 = Math.sin(a2) * rBar;
+            const segLen = Math.hypot(x2 - x1, z2 - z1);
+            const segMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.8, 0.8, segLen, 8), metalMat);
+            segMesh.position.set((x1 + x2) / 2, rollUp + 3, (z1 + z2) / 2);
+            segMesh.rotation.z = Math.PI / 2;
+            segMesh.rotation.y = -Math.atan2(z2 - z1, x2 - x1);
+            gripGroup.add(segMesh);
+          }
+          gripGroup.position.set(width, 0, depth);
+          doorPivot.add(gripGroup);
 
-          // Curved quarter-round corner post for luxury curved profile
-          const curveR = Math.min(depth * 0.35, 18);
-          const curveGeo = new THREE.CylinderGeometry(curveR, curveR, height, 24, 1, false, 0, Math.PI / 2);
-          const curveMesh = new THREE.Mesh(curveGeo, carcassMat);
-          curveMesh.position.set(curveR, height / 2, curveR);
-          curveMesh.rotation.y = Math.PI;
-          modGroup.add(curveMesh);
-        } else if (mod.doorType !== 'none') {
-          doorPivot.position.set(0, 0, 0);
-          // Positive rotation around Y swings +X into -Z (into the room)
-          doorPivot.rotation.y = openPercent * (Math.PI / 1.7);
-          const frontMesh = new THREE.Mesh(new THREE.BoxGeometry(width - 0.8, height - 2, 1.8), frontMat);
-          frontMesh.position.set(width / 2, height / 2, -0.9);
-          doorPivot.add(frontMesh);
+          modGroup.add(doorPivot);
+
+        } else {
+          // Standard Back Wall Cabinet Carcass
+          const carcassGeo = new THREE.BoxGeometry(width, height, depth);
+          const carcassMesh = new THREE.Mesh(carcassGeo, carcassMat);
+          carcassMesh.position.set(width / 2, height / 2, depth / 2);
+          carcassMesh.castShadow = true;
+          carcassMesh.receiveShadow = true;
+          modGroup.add(carcassMesh);
+
+          if (mod.category === 'base') {
+            const ctGeo = new THREE.BoxGeometry(width, 3.5, depth + 2);
+            const ctMesh = new THREE.Mesh(ctGeo, countertopMat);
+            ctMesh.position.set(width / 2, height - 1.75, depth / 2 - 1);
+            ctMesh.castShadow = true;
+            modGroup.add(ctMesh);
+
+            if (mod.applianceType === 'sink') {
+              const basinGeo = new THREE.BoxGeometry(width * 0.75, 18, depth * 0.65);
+              const basinMesh = new THREE.Mesh(basinGeo, metalMat);
+              basinMesh.position.set(width / 2, height - 9, depth / 2);
+              modGroup.add(basinMesh);
+
+              const faucetGeo = new THREE.CylinderGeometry(1.5, 1.5, 32);
+              const faucetMesh = new THREE.Mesh(faucetGeo, metalMat);
+              faucetMesh.position.set(width / 2, height + 16, depth / 2 + 12);
+              modGroup.add(faucetMesh);
+            }
+          }
+
+          // Kinetic Doors / Drawers for Back Wall
+          const doorPivot = new THREE.Group();
+          if (mod.doorType === 'drawers') {
+            doorPivot.position.set(0, 0, -openPercent * 35);
+            const frontMesh = new THREE.Mesh(new THREE.BoxGeometry(width - 0.8, height - 8, 1.8), frontMat);
+            frontMesh.position.set(width / 2, height / 2, -0.9);
+            doorPivot.add(frontMesh);
+
+            const handle = new THREE.Mesh(new THREE.CylinderGeometry(0.8, 0.8, width * 0.5), metalMat);
+            handle.rotation.z = Math.PI / 2;
+            handle.position.set(width / 2, height * 0.7, -3);
+            doorPivot.add(handle);
+          } else if (mod.doorType === 'lift-up') {
+            doorPivot.position.set(0, height, 0);
+            doorPivot.rotation.x = openPercent * (Math.PI / 2.2);
+            const frontMesh = new THREE.Mesh(new THREE.BoxGeometry(width - 0.8, height - 0.8, 1.8), frontMat);
+            frontMesh.position.set(width / 2, -height / 2, -0.9);
+            doorPivot.add(frontMesh);
+          } else if (mod.doorType === 'double-door') {
+            const angle = openPercent * (Math.PI / 1.7);
+            const leftPivot = new THREE.Group();
+            leftPivot.position.set(0, 0, 0);
+            leftPivot.rotation.y = angle;
+            const leftDoor = new THREE.Mesh(new THREE.BoxGeometry(width / 2 - 0.5, height - 2, 1.8), frontMat);
+            leftDoor.position.set(width / 4, height / 2, -0.9);
+            leftPivot.add(leftDoor);
+
+            const rightPivot = new THREE.Group();
+            rightPivot.position.set(width, 0, 0);
+            rightPivot.rotation.y = -angle;
+            const rightDoor = new THREE.Mesh(new THREE.BoxGeometry(width / 2 - 0.5, height - 2, 1.8), frontMat);
+            rightDoor.position.set(-width / 4, height / 2, -0.9);
+            rightPivot.add(rightDoor);
+
+            doorPivot.add(leftPivot);
+            doorPivot.add(rightPivot);
+          } else if (mod.doorType === 'pocket') {
+            const slide = openPercent * (width * 0.45);
+            const leftDoor = new THREE.Mesh(new THREE.BoxGeometry(width / 2 - 1, height - 2, 1.8), frontMat);
+            leftDoor.position.set(width / 4 - slide, height / 2, -0.9);
+            const rightDoor = new THREE.Mesh(new THREE.BoxGeometry(width / 2 - 1, height - 2, 1.8), frontMat);
+            rightDoor.position.set((3 * width) / 4 + slide, height / 2, -0.9);
+            doorPivot.add(leftDoor);
+            doorPivot.add(rightDoor);
+          } else if (mod.doorType !== 'none') {
+            doorPivot.position.set(0, 0, 0);
+            doorPivot.rotation.y = openPercent * (Math.PI / 1.7);
+            const frontMesh = new THREE.Mesh(new THREE.BoxGeometry(width - 0.8, height - 2, 1.8), frontMat);
+            frontMesh.position.set(width / 2, height / 2, -0.9);
+            doorPivot.add(frontMesh);
+          }
+          modGroup.add(doorPivot);
         }
-        modGroup.add(doorPivot);
 
       } else if (mod.rotation === 270) {
         // Left wall modules: depth along X (0..depth), height along Y (0..height), width along Z (0..width)

@@ -290,6 +290,50 @@ export const LiveKitchenTourOverlay: React.FC<LiveKitchenTourOverlayProps> = ({ 
             ניווט: מקשי חצים / WASD | סיבוב 360° בעכבר
           </span>
         </div>
+
+        {/* Mini-Map Radar (Right side) */}
+        <div className="pointer-events-auto bg-slate-950/90 backdrop-blur-md p-2 rounded-2xl border border-slate-800 shadow-2xl hidden sm:flex flex-col items-center">
+          <div className="text-[9px] font-bold text-amber-400 mb-1 flex items-center gap-1">
+            <Compass className="w-2.5 h-2.5" />
+            <span>מפת סיור לייב</span>
+          </div>
+          <svg width="70" height="130" viewBox="0 0 317 705" className="bg-slate-900 rounded-lg border border-slate-800">
+            {/* Room envelope */}
+            <rect x="0" y="0" width="317" height="705" fill="#0f172a" stroke="#334155" strokeWidth="6" />
+            {/* Pillars */}
+            <rect x="0" y="263" width="89" height="25" fill="#475569" />
+            <rect x="0" y="556" width="89" height="25" fill="#475569" />
+            {/* Station pins */}
+            {TOUR_STATIONS.map((st, idx) => {
+              const isCurr = activeStationIndex === idx;
+              return (
+                <g key={st.id} onClick={() => setStationIndex(idx)} className="cursor-pointer">
+                  {isCurr && (
+                    <circle cx={st.camPos[0]} cy={st.camPos[2]} r="28" fill="#f59e0b" fillOpacity="0.3" className="animate-ping" />
+                  )}
+                  <circle
+                    cx={st.camPos[0]}
+                    cy={st.camPos[2]}
+                    r={isCurr ? "16" : "10"}
+                    fill={isCurr ? "#f59e0b" : "#64748b"}
+                    stroke="#ffffff"
+                    strokeWidth="3"
+                  />
+                  <text
+                    x={st.camPos[0]}
+                    y={st.camPos[2] + 4}
+                    fill="#000000"
+                    fontSize="11"
+                    fontWeight="bold"
+                    textAnchor="middle"
+                  >
+                    {st.stationNumber}
+                  </text>
+                </g>
+              );
+            })}
+          </svg>
+        </div>
       </div>
     </div>
   );
