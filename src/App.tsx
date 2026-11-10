@@ -13,6 +13,8 @@ import { ReferenceMediaModal } from './components/ReferenceMediaModal';
 import { ProjectExportModal } from './components/ProjectExportModal';
 import { MobileControlsModal } from './components/MobileControlsModal';
 import { MobileNavigation } from './components/MobileNavigation';
+import { LuxurySplashPortal } from './components/LuxurySplashPortal';
+import { AccessibilityWidget } from './components/AccessibilityWidget';
 
 export const App: React.FC = () => {
   const viewMode = useKitchenStore(state => state.viewMode);
@@ -20,7 +22,13 @@ export const App: React.FC = () => {
   const activeDialog = useKitchenStore(state => state.activeDialog);
 
   return (
-    <div dir="rtl" className="flex flex-col w-full h-[100dvh] max-h-[100dvh] overflow-hidden bg-slate-950 font-sans">
+    <div dir="rtl" className="flex flex-col w-full h-[100dvh] max-h-[100dvh] overflow-hidden bg-slate-950 font-sans relative">
+      {/* Welcome & Bespoke Client Presentation Portal */}
+      <LuxurySplashPortal />
+
+      {/* Universal Israeli Standard 5568 / WCAG 2.1 AA Accessibility Widget */}
+      <AccessibilityWidget />
+
       {/* Top Header Navigation */}
       <Header />
 

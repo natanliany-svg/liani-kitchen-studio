@@ -49,6 +49,23 @@ interface KitchenStoreState {
   activeDialog: 'none' | 'bom' | 'media' | 'export' | 'catalog' | 'inspector' | 'controls';
   mobileTab: '3d' | '2d' | 'compare' | 'catalog' | 'media';
 
+  // Splash & Presentation Portal
+  isSplashOpen: boolean;
+  setSplashOpen: (open: boolean) => void;
+  toggleSplash: () => void;
+
+  // Israeli Accessibility Standard 5568 / WCAG 2.1 AA
+  isAccessibilityOpen: boolean;
+  highContrast: boolean;
+  fontScale: number; // 100, 115, 130
+  reducedMotion: boolean;
+  highlightLinks: boolean;
+  toggleAccessibilityDialog: () => void;
+  setHighContrast: (v: boolean) => void;
+  setFontScale: (scale: number) => void;
+  setReducedMotion: (v: boolean) => void;
+  setHighlightLinks: (v: boolean) => void;
+
   // Undo/Redo History
   historyPast: PlacedModule[][];
   historyFuture: PlacedModule[][];
@@ -125,6 +142,21 @@ export const useKitchenStore = create<KitchenStoreState>((set, get) => {
 
     activeDialog: 'none',
     mobileTab: '3d',
+
+    isSplashOpen: true,
+    setSplashOpen: (open: boolean) => set({ isSplashOpen: open }),
+    toggleSplash: () => set(state => ({ isSplashOpen: !state.isSplashOpen })),
+
+    isAccessibilityOpen: false,
+    highContrast: false,
+    fontScale: 100,
+    reducedMotion: false,
+    highlightLinks: false,
+    toggleAccessibilityDialog: () => set(state => ({ isAccessibilityOpen: !state.isAccessibilityOpen })),
+    setHighContrast: (v: boolean) => set({ highContrast: v }),
+    setFontScale: (scale: number) => set({ fontScale: scale }),
+    setReducedMotion: (v: boolean) => set({ reducedMotion: v }),
+    setHighlightLinks: (v: boolean) => set({ highlightLinks: v }),
 
     historyPast: [],
     historyFuture: [],

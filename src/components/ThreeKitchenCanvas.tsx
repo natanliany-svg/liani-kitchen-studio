@@ -1143,15 +1143,16 @@ export const ThreeKitchenCanvas: React.FC<ThreeKitchenCanvasProps> = ({
     const animate = () => {
       animFrameIdRef.current = requestAnimationFrame(animate);
 
-      // Live Tour camera glide & autopilot
+      // Live Tour camera glide & autopilot (Human eye-level steady tracking)
       if (isTourActiveRef.current && camera && controls) {
         if (isTransitioningRef.current) {
-          const lerpFactor = 0.04 * tourSpeedRef.current;
+          const lerpFactor = 0.035 * tourSpeedRef.current;
           camera.position.lerp(targetCamPosRef.current, lerpFactor);
+          camera.position.y = 158; // Firm human eye-level lock!
           controls.target.lerp(targetLookAtRef.current, lerpFactor);
           if (
-            camera.position.distanceTo(targetCamPosRef.current) < 2 &&
-            controls.target.distanceTo(targetLookAtRef.current) < 2
+            camera.position.distanceTo(targetCamPosRef.current) < 2.5 &&
+            controls.target.distanceTo(targetLookAtRef.current) < 2.5
           ) {
             isTransitioningRef.current = false;
             stationDwellStartRef.current = performance.now();
@@ -1243,7 +1244,7 @@ export const ThreeKitchenCanvas: React.FC<ThreeKitchenCanvasProps> = ({
     tourSpeedRef.current = tourSpeed;
   }, [isLiveTourActive, isTourPlaying, tourSpeed]);
 
-  // Handle station change in Live Tour
+  // Handle station change in Live Tour with synchronized animations
   useEffect(() => {
     if (!isLiveTourActive) return;
     const station = TOUR_STATIONS[activeStationIndex] || TOUR_STATIONS[0];
@@ -1251,7 +1252,17 @@ export const ThreeKitchenCanvas: React.FC<ThreeKitchenCanvasProps> = ({
     targetLookAtRef.current.set(...station.targetPos);
     isTransitioningRef.current = true;
     stationDwellStartRef.current = performance.now();
-  }, [isLiveTourActive, activeStationIndex]);
+
+    // Synchronized architectural action: when approaching Station 5 (appliance garage), open tambour shutter
+    const garageMod = modules.find(m => m.doorType === 'tambour' || m.applianceType === 'appliance-garage');
+    if (garageMod) {
+      if (activeStationIndex === 4) {
+        toggleDoorOpen(garageMod.id, 1);
+      } else if (garageMod.openPercent > 0.1) {
+        toggleDoorOpen(garageMod.id, 0);
+      }
+    }
+  }, [isLiveTourActive, activeStationIndex, modules, toggleDoorOpen]);
 
   // Handle Free Walk / Drive step
   const handleDriveStep = useCallback((dir: 'forward' | 'backward' | 'left' | 'right' | 'turn-left' | 'turn-right') => {
@@ -1319,7 +1330,7 @@ export const ThreeKitchenCanvas: React.FC<ThreeKitchenCanvasProps> = ({
 
       {/* Live Virtual Tour Interactive HUD & Driving Controller */}
       {isLiveTourActive && (
-        <LiveKitchenTourOverlay onDriveStep={handleDriveStep} />
+        <LiveKitchenTourOverlay />
       )}
 
       {!isMiniView && !isLiveTourActive && (

@@ -65,7 +65,11 @@ export const MobileNavigation: React.FC = () => {
     <>
       {/* Mobile Slide-Up Material & Finishes Bottom Sheet */}
       {showPaletteSheet && (
-        <div className="lg:hidden fixed inset-0 z-40 bg-black/60 backdrop-blur-sm flex items-end animate-in fade-in duration-200">
+        <div 
+          onTouchStart={(e) => e.stopPropagation()}
+          onPointerDown={(e) => e.stopPropagation()}
+          className="lg:hidden fixed inset-0 z-40 bg-black/60 backdrop-blur-sm flex items-end animate-in fade-in duration-200"
+        >
           <div className="w-full bg-slate-950 border-t border-slate-800 rounded-t-3xl p-5 shadow-2xl text-white max-h-[80vh] overflow-y-auto">
             <div className="flex items-center justify-between pb-3 border-b border-slate-800">
               <div className="flex items-center gap-2">
@@ -143,7 +147,11 @@ export const MobileNavigation: React.FC = () => {
       )}
 
       {/* Floating Modern Mobile Bottom Dock */}
-      <nav className="lg:hidden bg-slate-950/95 backdrop-blur-xl border-t border-slate-800/80 text-white py-1.5 px-2 select-none z-30 shadow-2xl">
+      <nav 
+        onTouchStart={(e) => e.stopPropagation()}
+        onPointerDown={(e) => e.stopPropagation()}
+        className="lg:hidden bg-slate-950/95 backdrop-blur-xl border-t border-slate-800/80 text-white py-1.5 px-2 select-none z-30 shadow-2xl"
+      >
         <div className="grid grid-cols-5 gap-1.5 text-center text-[10px]">
           {/* 1. 3D Live Orbit */}
           <button

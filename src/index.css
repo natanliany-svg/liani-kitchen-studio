@@ -45,3 +45,28 @@ html, body, #root {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+/* Israeli Standard 5568 Accessibility Enhancements */
+.accessibility-high-contrast {
+  filter: contrast(140%) brightness(105%);
+}
+
+.accessibility-high-contrast button,
+.accessibility-high-contrast a,
+.accessibility-high-contrast input {
+  outline: 2px solid #eab308 !important;
+}
+
+.accessibility-highlight-links button,
+.accessibility-highlight-links a {
+  text-decoration: underline !important;
+  box-shadow: 0 0 0 2px #38bdf8 !important;
+}
+
+.accessibility-reduced-motion *,
+.accessibility-reduced-motion *::before,
+.accessibility-reduced-motion *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+}

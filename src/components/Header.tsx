@@ -3,51 +3,44 @@ import { useKitchenStore } from '../store/useKitchenStore';
 import { 
   Camera, 
   Layers, 
-  Sliders, 
-  Undo2, 
-  Redo2, 
-  Calculator, 
-  Image, 
-  Palette, 
-  Sun, 
   DoorClosed, 
   DoorOpen,
-  ArrowRightLeft,
-  Columns2,
   Sparkles,
-  Download,
-  Compass
+  Compass,
+  Ruler,
+  Calculator,
+  Sun,
+  Moon,
+  Accessibility,
+  Palette
 } from 'lucide-react';
-import { MaterialTheme, LightingMode, CameraPreset, ViewMode } from '../types/kitchen';
+import { LightingMode, ViewMode } from '../types/kitchen';
 
 export const Header: React.FC = () => {
   const activePlan = useKitchenStore(state => state.activePlan);
   const setPlan = useKitchenStore(state => state.setPlan);
   const viewMode = useKitchenStore(state => state.viewMode);
   const setViewMode = useKitchenStore(state => state.setViewMode);
-  const cameraPreset = useKitchenStore(state => state.cameraPreset);
-  const setCameraPreset = useKitchenStore(state => state.setCameraPreset);
-  const theme = useKitchenStore(state => state.theme);
-  const setTheme = useKitchenStore(state => state.setTheme);
   const lightingMode = useKitchenStore(state => state.lightingMode);
   const setLightingMode = useKitchenStore(state => state.setLightingMode);
   const allDoorsOpen = useKitchenStore(state => state.allDoorsOpen);
   const toggleAllDoors = useKitchenStore(state => state.toggleAllDoors);
-  const showDimensions = useKitchenStore(state => state.showDimensions);
-  const toggleDimensions = useKitchenStore(state => state.toggleDimensions);
-  const showKosherColors = useKitchenStore(state => state.showKosherColors);
-  const toggleKosherColors = useKitchenStore(state => state.toggleKosherColors);
-  const undo = useKitchenStore(state => state.undo);
-  const redo = useKitchenStore(state => state.redo);
-  const historyPast = useKitchenStore(state => state.historyPast);
-  const historyFuture = useKitchenStore(state => state.historyFuture);
   const activeDialog = useKitchenStore(state => state.activeDialog);
   const setActiveDialog = useKitchenStore(state => state.setActiveDialog);
+  const toggleSplash = useKitchenStore(state => state.toggleSplash);
+  const toggleAccessibilityDialog = useKitchenStore(state => state.toggleAccessibilityDialog);
 
   // Live Tour Store integration
   const isLiveTourActive = useKitchenStore(state => state.isLiveTourActive);
   const startLiveTour = useKitchenStore(state => state.startLiveTour);
   const stopLiveTour = useKitchenStore(state => state.stopLiveTour);
+
+  // Next Lighting Mode Cycle
+  const cycleLighting = () => {
+    const modes: LightingMode[] = ['daylight', 'warm-ambient', 'shabbat'];
+    const nextIdx = (modes.indexOf(lightingMode) + 1) % modes.length;
+    setLightingMode(modes[nextIdx]);
+  };
 
   // Take screenshot
   const handleScreenshot = () => {
@@ -64,46 +57,51 @@ export const Header: React.FC = () => {
   };
 
   return (
-    <header className="bg-slate-950 border-b border-slate-800 text-white px-2.5 sm:px-4 h-14 select-none shadow-md shrink-0 flex items-center justify-between overflow-hidden">
-      {/* Brand & Client Identification */}
-      <div className="flex items-center gap-2 sm:gap-3.5 shrink-0">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-amber-600 via-amber-500 to-yellow-400 flex items-center justify-center font-black text-slate-950 text-base shadow-lg shadow-amber-500/25 shrink-0">
+    <header className="bg-slate-950/90 backdrop-blur-xl border-b border-slate-800 text-white px-3 sm:px-6 h-16 select-none shadow-2xl shrink-0 flex items-center justify-between z-30 transition-all">
+      
+      {/* Brand & Client Identification (Clickable to open Splash Portal) */}
+      <div className="flex items-center gap-3 sm:gap-4 shrink-0">
+        <button
+          onClick={toggleSplash}
+          className="flex items-center gap-2.5 group text-right focus:outline-none focus:ring-2 focus:ring-amber-400 rounded-xl p-1 -m-1 transition-all"
+          title="לחץ לפתיחת שער הפרויקט ומיתוג המטבח"
+        >
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-600 via-amber-500 to-yellow-300 flex items-center justify-center font-black text-slate-950 text-lg shadow-lg shadow-amber-500/20 group-hover:scale-105 transition-transform shrink-0">
             א
           </div>
-          <div>
+          <div className="hidden sm:block">
             <div className="flex items-center gap-1.5">
-              <h1 className="font-extrabold text-xs sm:text-sm leading-none whitespace-nowrap text-amber-400 tracking-wide">
+              <span className="font-extrabold text-sm text-transparent bg-clip-text bg-gradient-to-r from-amber-200 to-amber-400 tracking-wide font-serif">
                 אחינועם מטבחים
-              </h1>
-              <span className="hidden md:inline-block text-[10px] font-bold px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-300 border border-amber-500/30">
-                לקוח 3155
+              </span>
+              <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                תיק 3155
               </span>
             </div>
-            <span className="text-[10px] text-slate-400 whitespace-nowrap hidden sm:inline-block">
-              תכנון מטבח משפחת אור | סטודיו אדריכלי
-            </span>
+            <div className="text-[11px] text-slate-400 font-medium">
+              משפחת אור • סטודיו אדריכלי
+            </div>
           </div>
-        </div>
+        </button>
 
         {/* Plan Selector Buttons */}
-        <div className="bg-slate-900 p-0.5 rounded-lg border border-slate-700 flex text-xs shrink-0">
+        <div className="bg-slate-900/90 p-1 rounded-xl border border-slate-800 flex text-xs shrink-0 shadow-inner">
           <button
             onClick={() => setPlan('plan-A')}
-            className={`px-2.5 sm:px-3 py-1 rounded-md font-bold transition-all text-xs whitespace-nowrap ${
+            className={`px-3 py-1.5 rounded-lg font-bold transition-all text-xs whitespace-nowrap ${
               activePlan === 'plan-A'
-                ? 'bg-amber-500 text-slate-950 shadow-md'
-                : 'text-slate-300 hover:text-white'
+                ? 'bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20'
+                : 'text-slate-300 hover:text-white hover:bg-slate-800/60'
             }`}
           >
             תוכנית א'
           </button>
           <button
             onClick={() => setPlan('plan-B')}
-            className={`px-2.5 sm:px-3 py-1 rounded-md font-bold transition-all text-xs whitespace-nowrap ${
+            className={`px-3 py-1.5 rounded-lg font-bold transition-all text-xs whitespace-nowrap ${
               activePlan === 'plan-B'
-                ? 'bg-sky-500 text-slate-950 shadow-md'
-                : 'text-slate-300 hover:text-white'
+                ? 'bg-sky-500 text-slate-950 shadow-md shadow-sky-500/20'
+                : 'text-slate-300 hover:text-white hover:bg-slate-800/60'
             }`}
           >
             תוכנית ב'
@@ -111,8 +109,26 @@ export const Header: React.FC = () => {
         </div>
       </div>
 
-      {/* Main Studio View Tabs */}
-      <div className="flex items-center gap-1 bg-slate-900/90 p-0.5 rounded-lg border border-slate-800 text-xs shrink-0">
+      {/* Main Studio View Tabs (Desktop - Clean 5 Tabs) */}
+      <div className="hidden md:flex items-center gap-1.5 bg-slate-900/80 p-1 rounded-2xl border border-slate-800 text-xs shrink-0 shadow-xl">
+        
+        {/* 3D View */}
+        <button
+          onClick={() => {
+            if (isLiveTourActive) stopLiveTour();
+            setViewMode('3d');
+          }}
+          className={`px-4 py-2 rounded-xl transition-all font-bold flex items-center gap-2 whitespace-nowrap ${
+            viewMode === '3d' && !isLiveTourActive
+              ? 'bg-amber-500 text-slate-950 shadow-lg shadow-amber-500/20'
+              : 'text-slate-300 hover:text-white hover:bg-slate-800'
+          }`}
+        >
+          <Layers className="w-4 h-4" />
+          <span>תלת-ממד 3D</span>
+        </button>
+
+        {/* Live Tour */}
         <button
           onClick={() => {
             if (isLiveTourActive) {
@@ -121,139 +137,110 @@ export const Header: React.FC = () => {
               startLiveTour(0);
             }
           }}
-          className={`px-2.5 sm:px-3 py-1 rounded-md transition-all font-bold flex items-center gap-1.5 whitespace-nowrap ${
+          className={`px-4 py-2 rounded-xl transition-all font-bold flex items-center gap-2 whitespace-nowrap ${
             isLiveTourActive
-              ? 'bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-400 text-slate-950 font-black shadow-lg shadow-amber-500/30 ring-1 ring-amber-300'
+              ? 'bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-300 text-slate-950 font-black shadow-lg shadow-amber-500/30'
               : 'text-amber-400 hover:text-white hover:bg-slate-800'
           }`}
-          title="סיור וירטואלי חי במטבח – מצב נהיגה ותנועה חופשית בין התחנות"
+          title="סיור קולנועי רציף בגובה עיניים עם סנכרון תריס קשתי ותאורת לד"
         >
-          <Compass className={`w-3.5 h-3.5 ${isLiveTourActive ? 'animate-spin' : ''}`} />
-          <span>🚗 סיור בלייב</span>
+          <Compass className={`w-4 h-4 ${isLiveTourActive ? 'animate-spin' : ''}`} />
+          <span>סיור קולנועי חי</span>
         </button>
+
+        {/* CAD Blueprint */}
         <button
           onClick={() => {
             if (isLiveTourActive) stopLiveTour();
-            setViewMode('3d');
+            setViewMode('2d');
           }}
-          className={`px-2.5 sm:px-3 py-1 rounded-md transition-all font-semibold flex items-center gap-1.5 whitespace-nowrap ${
-            viewMode === '3d' && !isLiveTourActive ? 'bg-amber-500 text-slate-950 shadow-md' : 'text-slate-300 hover:text-white hover:bg-slate-800'
+          className={`px-4 py-2 rounded-xl transition-all font-bold flex items-center gap-2 whitespace-nowrap ${
+            viewMode === '2d'
+              ? 'bg-amber-500 text-slate-950 shadow-lg shadow-amber-500/20'
+              : 'text-slate-300 hover:text-white hover:bg-slate-800'
           }`}
         >
-          <Layers className="w-3.5 h-3.5" />
-          <span>תלת-ממד 3D</span>
-        </button>
-        <button
-          onClick={() => setViewMode('2d')}
-          className={`px-2.5 sm:px-3 py-1 rounded-md transition-all font-semibold flex items-center gap-1.5 whitespace-nowrap ${
-            viewMode === '2d' ? 'bg-amber-500 text-slate-950 shadow-md' : 'text-slate-300 hover:text-white hover:bg-slate-800'
-          }`}
-        >
+          <Ruler className="w-4 h-4" />
           <span>תוכנית CAD</span>
         </button>
+
+        {/* Materials & Lighting Modal */}
         <button
-          onClick={() => setViewMode('renders')}
-          className={`px-2.5 sm:px-3 py-1 rounded-md transition-all font-semibold flex items-center gap-1.5 whitespace-nowrap ${
-            viewMode === 'renders' ? 'bg-amber-500 text-slate-950 shadow-md' : 'text-slate-300 hover:text-white hover:bg-slate-800'
+          onClick={() => setActiveDialog(activeDialog === 'controls' ? 'none' : 'controls')}
+          className={`px-4 py-2 rounded-xl transition-all font-bold flex items-center gap-2 whitespace-nowrap ${
+            activeDialog === 'controls'
+              ? 'bg-slate-800 text-amber-400 border border-amber-500/40'
+              : 'text-slate-300 hover:text-white hover:bg-slate-800'
           }`}
         >
-          <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-          <span>הדמיות 📸</span>
-        </button>
-        <button
-          onClick={() => setViewMode('compare')}
-          className={`hidden md:flex items-center gap-1 px-2.5 sm:px-3 py-1 rounded-md transition-all font-semibold whitespace-nowrap ${
-            viewMode === 'compare' ? 'bg-purple-600 text-white shadow-md' : 'text-slate-400 hover:text-white hover:bg-slate-800'
-          }`}
-        >
-          <ArrowRightLeft className="w-3 h-3" />
-          <span>השוואה</span>
-        </button>
-      </div>
-
-      {/* Quick Interactive Actions */}
-      <div className="flex items-center gap-1 sm:gap-2 text-xs shrink-0">
-        {/* Kinetic Doors & Clearances Toggle */}
-        <button
-          onClick={toggleAllDoors}
-          className={`px-2.5 py-1 rounded-lg border flex items-center gap-1.5 transition-all shrink-0 ${
-            allDoorsOpen
-              ? 'bg-amber-500 border-amber-400 text-slate-950 font-bold shadow-md shadow-amber-500/20'
-              : 'bg-slate-900 border-slate-700 text-slate-300 hover:text-white hover:bg-slate-800'
-          }`}
-          title="פתח/סגור את כל הדלתות והמגירות לבדיקת רדיוס פתיחה ותנועה"
-        >
-          {allDoorsOpen ? <DoorOpen className="w-3.5 h-3.5 text-slate-950" /> : <DoorClosed className="w-3.5 h-3.5 text-amber-400" />}
-          <span className="hidden lg:inline">{allDoorsOpen ? 'סגור ארונות' : 'פתיחת ארונות (110°)'}</span>
+          <Palette className="w-4 h-4 text-amber-400" />
+          <span>חומרים ותאורה</span>
         </button>
 
-        {/* Material Themes Switcher (Desktop) */}
-        <div className="hidden xl:flex items-center gap-1.5 bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 shrink-0">
-          <Palette className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-          <select
-            value={theme}
-            onChange={(e) => setTheme(e.target.value as MaterialTheme)}
-            className="bg-transparent text-white focus:outline-none cursor-pointer text-xs"
-          >
-            <option value="cashmere-oak" className="bg-slate-800">קשמיר + אלון טבעי</option>
-            <option value="sahara-bronze" className="bg-slate-800">סהרה + ברונזה</option>
-            <option value="dark-graphite" className="bg-slate-800">גרפיט יוקרתי</option>
-            <option value="pure-white" className="bg-slate-800">לבן נקי ושיש</option>
-          </select>
-        </div>
-
-        {/* Lighting Switcher (Desktop) */}
-        <div className="hidden 2xl:flex items-center gap-1.5 bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 shrink-0">
-          <Sun className="w-3.5 h-3.5 text-yellow-400 shrink-0" />
-          <select
-            value={lightingMode}
-            onChange={(e) => setLightingMode(e.target.value as LightingMode)}
-            className="bg-transparent text-white focus:outline-none cursor-pointer text-xs"
-          >
-            <option value="daylight" className="bg-slate-800">אור יום טבעי</option>
-            <option value="task-led" className="bg-slate-800">תאורת לד עבודה</option>
-            <option value="warm-ambient" className="bg-slate-800">אווירת ערב חמימה</option>
-            <option value="shabbat" className="bg-slate-800">תאורת שבת</option>
-          </select>
-        </div>
-
-        {/* Reference Media Archive */}
-        <button
-          onClick={() => setActiveDialog('media')}
-          className="p-1.5 bg-slate-900 border border-slate-700 hover:bg-slate-800 rounded-lg text-slate-300 hover:text-white shrink-0"
-          title="תיק מסמכים אדריכלי וצילומי שטח | פרויקט משפחת אור"
-        >
-          <Image className="w-4 h-4 text-blue-400" />
-        </button>
-
-        {/* BOM Calculator */}
+        {/* BOM & Spec */}
         <button
           onClick={() => setActiveDialog('bom')}
-          className="bg-emerald-700 hover:bg-emerald-600 text-white px-2 sm:px-2.5 py-1 rounded-lg font-bold flex items-center gap-1 transition-colors shadow shrink-0"
-          title="כתב כמויות הנדסי ואומדן עלויות"
+          className="px-4 py-2 rounded-xl transition-all font-bold flex items-center gap-2 whitespace-nowrap text-slate-300 hover:text-white hover:bg-slate-800"
         >
-          <Calculator className="w-3.5 h-3.5" />
-          <span className="hidden sm:inline whitespace-nowrap">BOM</span>
+          <Calculator className="w-4 h-4 text-emerald-400" />
+          <span>מפרט ועלויות (BOM)</span>
         </button>
 
-        {/* HD Camera Capture */}
+      </div>
+
+      {/* Streamlined Quick Tools (Left Side) */}
+      <div className="flex items-center gap-2 shrink-0">
+        
+        {/* Kinetic Doors & Openings Toggle */}
+        <button
+          onClick={toggleAllDoors}
+          className={`h-10 px-3 rounded-xl border flex items-center gap-2 transition-all text-xs font-bold ${
+            allDoorsOpen
+              ? 'bg-amber-500 border-amber-400 text-slate-950 shadow-md shadow-amber-500/20'
+              : 'bg-slate-900 border-slate-800 text-slate-300 hover:text-white hover:bg-slate-800'
+          }`}
+          title="פתח/סגור את כל הדלתות והמגירות לבדיקת תנועה ורדיוסים"
+        >
+          {allDoorsOpen ? <DoorOpen className="w-4 h-4 text-slate-950" /> : <DoorClosed className="w-4 h-4 text-amber-400" />}
+          <span className="hidden xl:inline">{allDoorsOpen ? 'סגירת ארונות' : 'פתיחת ארונות'}</span>
+        </button>
+
+        {/* Lighting Mode Quick Cycle */}
+        <button
+          onClick={cycleLighting}
+          className="h-10 px-3 bg-slate-900 border border-slate-800 hover:border-slate-700 rounded-xl text-slate-300 hover:text-white flex items-center gap-2 transition-all text-xs font-medium"
+          title={`מצב תאורה: ${lightingMode === 'daylight' ? 'אור יום' : lightingMode === 'warm-ambient' ? 'ערב חמים' : 'שבת'}`}
+        >
+          {lightingMode === 'daylight' ? (
+            <Sun className="w-4 h-4 text-amber-400" />
+          ) : (
+            <Moon className="w-4 h-4 text-amber-300" />
+          )}
+          <span className="hidden xl:inline">
+            {lightingMode === 'daylight' ? 'יום' : lightingMode === 'warm-ambient' ? 'ערב 3000K' : 'שבת'}
+          </span>
+        </button>
+
+        {/* HD Screenshot */}
         <button
           onClick={handleScreenshot}
-          className="p-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg text-slate-200 shrink-0"
+          className="w-10 h-10 rounded-xl bg-slate-900 border border-slate-800 hover:border-amber-400/50 flex items-center justify-center text-slate-300 hover:text-amber-300 transition-all shadow"
           title="צילום תמונת HD של המטבח"
         >
-          <Camera className="w-4 h-4 text-amber-400" />
+          <Camera className="w-4 h-4" />
         </button>
 
-        {/* Mobile Settings Dialog Button */}
+        {/* Accessibility Toggle */}
         <button
-          onClick={() => setActiveDialog('controls')}
-          className="xl:hidden p-1.5 bg-blue-600/30 border border-blue-500/50 hover:bg-blue-600/50 rounded-lg text-blue-300 shrink-0"
-          title="הגדרות תצוגה ומצלמה"
+          onClick={toggleAccessibilityDialog}
+          className="w-10 h-10 rounded-xl bg-blue-600/30 border border-blue-500/50 hover:bg-blue-600/50 flex items-center justify-center text-blue-300 hover:text-white transition-all shadow"
+          title="תפריט נגישות (תקן 5568)"
         >
-          <Sliders className="w-4 h-4" />
+          <Accessibility className="w-4 h-4" />
         </button>
+
       </div>
+
     </header>
   );
 };
