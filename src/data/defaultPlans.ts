@@ -281,39 +281,24 @@ export const PLAN_A_MODULES: PlacedModule[] = [
     notesHe: 'משטח שיש רצוף העובר מתחת לארון המכשירים עד קיר שמאל!',
     priceIls: 4100
   },
-  // Corner Appliance Garage sitting ON TOP of the Countertop (Y=90..153, Net H=63cm) with Curved Tambour Shutter
+  // Continuous Full-Height Curved Corner Appliance Garage sitting ON TOP of the Countertop (Y=90..246, Net H=156cm)
+  // Replaces the square top cabinet with a single monolithic curved unit from countertop to ceiling!
   {
     id: 'planA-appliance-garage',
-    sku: 'APPL-TAMBOUR-60',
-    nameHe: 'ארון מכשירים פינתי על גבי השיש (תריס נגלל בחצי עיגול)',
+    sku: 'APPL-TAMBOUR-TALL-60',
+    nameHe: 'עמודת ארון מכשירים קשתית מלאה מהשיש עד התקרה (156 ס"מ)',
     category: 'wall',
     kosherZone: 'pareve',
     wallId: 'back-wall',
     position: [257, 90, 645],
     rotation: 0,
-    dimensions: { width: 60, height: 63, depth: 60 },
+    dimensions: { width: 60, height: 156, depth: 60 },
     doorType: 'tambour',
     openPercent: 0,
     isAppliance: true,
     applianceType: 'appliance-garage',
-    notesHe: 'יושב ישירות על השיש ומגיע בדיוק עד תחתית הארונות העליונים (90 עד 153 ס"מ)! תריס נגלל קשתי (Tambour) לנצילות מקסימלית ואפס התנגשות עם דלתות סמוכות',
-    priceIls: 4200
-  },
-  // Appliance Garage Upper Unit (Y=153..246, Net H=93cm flush to ceiling)
-  {
-    id: 'planA-garage-pesach-top',
-    sku: 'WALL-GARAGE-PESACH',
-    nameHe: 'ארון עליון לפסח מעל ארון מכשירים עד התקרה (246 ס"מ)',
-    category: 'wall',
-    kosherZone: 'pareve',
-    wallId: 'back-wall',
-    position: [257, 153, 645],
-    rotation: 0,
-    dimensions: { width: 60, height: 93, depth: 60 },
-    doorType: 'lift-up',
-    openPercent: 0,
-    notesHe: 'ממשיך את קו הארונות העליונים ב-153 ס"מ עד התקרה 246 ס"מ ביישור מלא עם מגדל האפייה',
-    priceIls: 1800
+    notesHe: 'עמודה קשתית עגולה מונוליטית מהשיש (90 ס"מ) ועד התקרה (246 ס"מ) ללא שום ארון מרובע מעליה! חזית מעוגלת 45° עם תריס נגלל שלבי ותאורת פנים יוקרתית',
+    priceIls: 5900
   },
   // Dairy Upper Cabinets Across Back Wall stopping above the sink (X=38 to X=207: 169cm)
   {

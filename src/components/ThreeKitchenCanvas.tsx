@@ -281,7 +281,7 @@ export const ThreeKitchenCanvas: React.FC<ThreeKitchenCanvasProps> = ({
       group.add(edgeLine);
     });
 
-    // 7. Ceiling Perimeter Edge (Open ceiling for aerial 3D visibility)
+    // 7. Ceiling Perimeter Edge & Architectural Recessed Downlights
     const ceilingEdgeGeo = new THREE.EdgesGeometry(new THREE.BoxGeometry(ROOM_SPEC.widthCm, 2, ROOM_SPEC.depthCm));
     const ceilingEdgeMesh = new THREE.LineSegments(
       ceilingEdgeGeo, 
@@ -289,6 +289,35 @@ export const ThreeKitchenCanvas: React.FC<ThreeKitchenCanvasProps> = ({
     );
     ceilingEdgeMesh.position.set(ROOM_SPEC.widthCm / 2, ROOM_SPEC.heightCm, ROOM_SPEC.depthCm / 2);
     group.add(ceilingEdgeMesh);
+
+    // 8. Continuous Under-Cabinet Warm Architectural LED Light Channels (3000K)
+    const ledMat = new THREE.MeshBasicMaterial({ color: 0xffeedb });
+    const meatLedStrip = new THREE.Mesh(new THREE.BoxGeometry(2, 1, 268), ledMat);
+    meatLedStrip.position.set(38, 152.5, 288 + 134);
+    group.add(meatLedStrip);
+
+    const dairyLedStrip = new THREE.Mesh(new THREE.BoxGeometry(219, 1, 2), ledMat);
+    dairyLedStrip.position.set(38 + 219 / 2, 152.5, 667);
+    group.add(dairyLedStrip);
+
+    // 9. Ceiling Spotlights (Recessed minimalist downlight bezels matching luxury reference)
+    const spotGeo = new THREE.CylinderGeometry(4.5, 4.5, 1, 16);
+    const spotMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.3 });
+    const spotGlassMat = new THREE.MeshBasicMaterial({ color: 0xfff8ee });
+    [
+      [120, 200], [197, 200],
+      [120, 360], [197, 360],
+      [120, 520], [197, 520],
+      [160, 640]
+    ].forEach(([x, z]) => {
+      const bezel = new THREE.Mesh(spotGeo, spotMat);
+      bezel.position.set(x, ROOM_SPEC.heightCm - 0.5, z);
+      const glass = new THREE.Mesh(new THREE.CircleGeometry(3.5, 16), spotGlassMat);
+      glass.rotation.x = Math.PI / 2;
+      glass.position.set(x, ROOM_SPEC.heightCm - 1.1, z);
+      group.add(bezel);
+      group.add(glass);
+    });
   }, [theme, getThemeColors]);
 
   // Build Modules Mesh Representation with verified world coordinates matching CAD and physics
@@ -317,11 +346,11 @@ export const ThreeKitchenCanvas: React.FC<ThreeKitchenCanvasProps> = ({
       }
 
       // Enhanced PBR Architectural Materials
-      const isWallUnit = mod.category === 'wall' || mod.doorType === 'lift-up';
+      // When showKosherColors is off, use uniform luxury cashmere/sand finish matching modern architectural standards
       const frontMat = new THREE.MeshStandardMaterial({
-        color: isSelected ? 0xffcc00 : isWallUnit ? colors.woodAccent : frontHex,
-        roughness: isWallUnit ? 0.6 : 0.45,
-        metalness: isWallUnit ? 0.05 : 0.12,
+        color: isSelected ? 0xffcc00 : frontHex,
+        roughness: 0.38,
+        metalness: 0.08,
         emissive: isSelected ? 0x443300 : 0x000000
       });
 
@@ -405,12 +434,16 @@ export const ThreeKitchenCanvas: React.FC<ThreeKitchenCanvasProps> = ({
       } else if (mod.rotation === 90) {
         // Right wall niches: depth along X (0..depth), height along Y (0..height), width along Z (0..width)
         // Front face is at local X = depth, facing +X into room
-        const carcassGeo = new THREE.BoxGeometry(depth, height, width);
-        const carcassMesh = new THREE.Mesh(carcassGeo, carcassMat);
-        carcassMesh.position.set(depth / 2, height / 2, width / 2);
-        carcassMesh.castShadow = true;
-        carcassMesh.receiveShadow = true;
-        modGroup.add(carcassMesh);
+
+        // Standard Carcass for non-tambour units
+        if (mod.doorType !== 'tambour') {
+          const carcassGeo = new THREE.BoxGeometry(depth, height, width);
+          const carcassMesh = new THREE.Mesh(carcassGeo, carcassMat);
+          carcassMesh.position.set(depth / 2, height / 2, width / 2);
+          carcassMesh.castShadow = true;
+          carcassMesh.receiveShadow = true;
+          modGroup.add(carcassMesh);
+        }
 
         // Countertop Slab if Base Unit
         if (mod.category === 'base') {
@@ -508,20 +541,40 @@ export const ThreeKitchenCanvas: React.FC<ThreeKitchenCanvasProps> = ({
           doorPivot.add(leftDoor);
           doorPivot.add(rightDoor);
         } else if (mod.doorType === 'tambour') {
-          // ================= RIGHT WALL CURVED TAMBOUR GARAGE =================
+          // ================= RIGHT WALL STANDALONE CURVED TAMBOUR GARAGE =================
+          // Pure quarter-round curved unit abutting Right Wall (X=0) and Back Wall (Z=width)
           const radius = Math.min(width, depth);
           const rollUp = openPercent * (height - 6);
           const currentH = Math.max(2, height - 4 - rollUp);
 
-          // Interior Accent Light
+          // 1. Structural Back and Side Panels (No box carcass!)
+          const sidePanel = new THREE.Mesh(new THREE.BoxGeometry(2, height, width), carcassMat);
+          sidePanel.position.set(1, height / 2, width / 2);
+          modGroup.add(sidePanel);
+
+          const backPanel = new THREE.Mesh(new THREE.BoxGeometry(depth, height, 2), carcassMat);
+          backPanel.position.set(depth / 2, height / 2, width - 1);
+          modGroup.add(backPanel);
+
+          // Top and Bottom Curved Sector Caps (Quarter circle centered at X=0, Z=width)
+          const capGeo = new THREE.CylinderGeometry(radius, radius, 2.5, 32, 1, false, Math.PI / 2, Math.PI / 2);
+          const topCap = new THREE.Mesh(capGeo, carcassMat);
+          topCap.position.set(0, height - 1.25, width);
+          modGroup.add(topCap);
+
+          const bottomCap = new THREE.Mesh(capGeo, carcassMat);
+          bottomCap.position.set(0, 1.25, width);
+          modGroup.add(bottomCap);
+
+          // Interior Warm Accent Light
           const garageLight = new THREE.PointLight(0xffdfaa, 1.8, 180);
-          garageLight.position.set(depth - radius * 0.45, height - 12, width - radius * 0.45);
+          garageLight.position.set(radius * 0.45, height - 12, width - radius * 0.45);
           modGroup.add(garageLight);
 
-          // Stand Mixer inside garage
+          // Stand Mixer inside garage facing diagonally into room
           const mixerGroup = new THREE.Group();
-          mixerGroup.position.set(depth - radius * 0.5, 4, width - radius * 0.5);
-          mixerGroup.rotation.y = Math.PI / 4;
+          mixerGroup.position.set(radius * 0.45, 4, width - radius * 0.45);
+          mixerGroup.rotation.y = (3 * Math.PI) / 4;
 
           const mixerBase = new THREE.Mesh(new THREE.BoxGeometry(14, 3.5, 22), metalMat);
           mixerBase.position.set(0, 1.75, 0);
@@ -537,7 +590,7 @@ export const ThreeKitchenCanvas: React.FC<ThreeKitchenCanvasProps> = ({
 
           modGroup.add(mixerGroup);
 
-          // Curved Cylindrical Sector Shutter along radius arc
+          // Curved Cylindrical Sector Shutter along radius arc facing diagonally into room
           const shutterGeo = new THREE.CylinderGeometry(
             radius - 1,
             radius - 1,
@@ -545,39 +598,47 @@ export const ThreeKitchenCanvas: React.FC<ThreeKitchenCanvasProps> = ({
             36,
             1,
             true,
-            0,
+            Math.PI / 2,
             Math.PI / 2
           );
           const shutterMesh = new THREE.Mesh(shutterGeo, frontMat);
-          shutterMesh.position.set(depth, currentH / 2 + rollUp + 2, width);
+          shutterMesh.position.set(0, currentH / 2 + rollUp + 2, width);
           doorPivot.add(shutterMesh);
 
           // Bottom Grip bar along curved arc
           const gripSegments = 16;
           const gripGroup = new THREE.Group();
           for (let s = 0; s < gripSegments; s++) {
-            const a1 = (s / gripSegments) * (Math.PI / 2);
-            const a2 = ((s + 1) / gripSegments) * (Math.PI / 2);
+            const a1 = Math.PI / 2 + (s / gripSegments) * (Math.PI / 2);
+            const a2 = Math.PI / 2 + ((s + 1) / gripSegments) * (Math.PI / 2);
             const rBar = radius + 0.8;
-            const x1 = Math.cos(a1) * rBar;
-            const z1 = Math.sin(a1) * rBar;
-            const x2 = Math.cos(a2) * rBar;
-            const z2 = Math.sin(a2) * rBar;
+            const x1 = Math.sin(a1) * rBar;
+            const z1 = Math.cos(a1) * rBar;
+            const x2 = Math.sin(a2) * rBar;
+            const z2 = Math.cos(a2) * rBar;
             const segLen = Math.hypot(x2 - x1, z2 - z1);
             const segMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.8, 0.8, segLen, 8), metalMat);
-            segMesh.position.set((x1 + x2) / 2, rollUp + 3, (z1 + z2) / 2);
+            segMesh.position.set((x1 + x2) / 2, rollUp + 3, width + (z1 + z2) / 2);
             segMesh.rotation.z = Math.PI / 2;
             segMesh.rotation.y = -Math.atan2(z2 - z1, x2 - x1);
             gripGroup.add(segMesh);
           }
-          gripGroup.position.set(depth, 0, width);
           doorPivot.add(gripGroup);
         } else if (mod.doorType !== 'none') {
-          doorPivot.position.set(depth, 0, 0);
-          doorPivot.rotation.y = openPercent * (Math.PI / 1.7);
-          const frontMesh = new THREE.Mesh(new THREE.BoxGeometry(1.8, height - 2, width - 0.8), frontMat);
-          frontMesh.position.set(0.9, height / 2, width / 2);
-          doorPivot.add(frontMesh);
+          // Check if module is at entrance (Niche 1, position[2] < 50): hinge towards room to avoid entrance penetration
+          if (mod.position[2] < 50) {
+            doorPivot.position.set(depth, 0, width);
+            doorPivot.rotation.y = -openPercent * (Math.PI / 1.7);
+            const frontMesh = new THREE.Mesh(new THREE.BoxGeometry(1.8, height - 2, width - 0.8), frontMat);
+            frontMesh.position.set(0.9, height / 2, -width / 2);
+            doorPivot.add(frontMesh);
+          } else {
+            doorPivot.position.set(depth, 0, 0);
+            doorPivot.rotation.y = openPercent * (Math.PI / 1.7);
+            const frontMesh = new THREE.Mesh(new THREE.BoxGeometry(1.8, height - 2, width - 0.8), frontMat);
+            frontMesh.position.set(0.9, height / 2, width / 2);
+            doorPivot.add(frontMesh);
+          }
         }
         modGroup.add(doorPivot);
 
@@ -607,6 +668,17 @@ export const ThreeKitchenCanvas: React.FC<ThreeKitchenCanvasProps> = ({
           const bottomCap = new THREE.Mesh(capGeo, carcassMat);
           bottomCap.position.set(width, 1.25, depth);
           modGroup.add(bottomCap);
+
+          // For tall 156cm continuous column, add intermediate dividing shelf and mid-level accent
+          if (height > 100) {
+            const midShelf = new THREE.Mesh(capGeo, carcassMat);
+            midShelf.position.set(width, 63, depth);
+            modGroup.add(midShelf);
+
+            const midLight = new THREE.PointLight(0xffdfaa, 1.4, 140);
+            midLight.position.set(width - radius * 0.45, 66, depth - radius * 0.45);
+            modGroup.add(midLight);
+          }
 
           // 2. Interior Warm Accent LED Lighting
           const garageLight = new THREE.PointLight(0xffdfaa, 1.8, 180);
